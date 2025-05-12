@@ -1,0 +1,94 @@
+.card {
+    background-color: var(--color-background-paper);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+// Elevation variants
+.elevation-0 {
+    box-shadow: none;
+}
+
+.elevation-1 {
+    box-shadow: var(--shadow-sm);
+}
+
+.elevation-2 {
+    box-shadow: var(--shadow-md);
+}
+
+.elevation-3 {
+    box-shadow: var(--shadow-lg);
+}
+
+// Header
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.headerContent {
+    flex: 1;
+}
+
+.title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.subtitle {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    margin-left: 16px;
+}
+
+// Content padding variants
+.padding-none {
+    padding: 0;
+}
+
+.padding-sm {
+    padding: 12px;
+}
+
+.padding-md {
+    padding: 16px;
+}
+
+.padding-lg {
+    padding: 24px;
+}
+
+// Footer
+.footer {
+    padding: 16px;
+    border-top: 1px solid var(--color-border-light);
+}
+
+// Modifiers
+.hoverable {
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+}
+
+.bordered {
+    border: 1px solid var(--color-border);
+}
+
+.clickable {
+    cursor: pointer;
+}

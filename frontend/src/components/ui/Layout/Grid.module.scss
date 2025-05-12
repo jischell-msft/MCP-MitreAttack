@@ -1,0 +1,143 @@
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.item {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+// Spacing variants
+.spacing-xs {
+    margin: -2px;
+
+    >.item {
+        padding: 2px;
+    }
+}
+
+.spacing-sm {
+    margin: -4px;
+
+    >.item {
+        padding: 4px;
+    }
+}
+
+.spacing-md {
+    margin: -8px;
+
+    >.item {
+        padding: 8px;
+    }
+}
+
+.spacing-lg {
+    margin: -12px;
+
+    >.item {
+        padding: 12px;
+    }
+}
+
+.spacing-xl {
+    margin: -16px;
+
+    >.item {
+        padding: 16px;
+    }
+}
+
+// Alignment
+.align-start {
+    align-items: flex-start;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.align-end {
+    align-items: flex-end;
+}
+
+.align-stretch {
+    align-items: stretch;
+}
+
+// Justify
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+.justify-space-between {
+    justify-content: space-between;
+}
+
+.justify-space-around {
+    justify-content: space-around;
+}
+
+.justify-space-evenly {
+    justify-content: space-evenly;
+}
+
+// Direction
+.direction-column {
+    flex-direction: column;
+}
+
+// Wrap
+.nowrap {
+    flex-wrap: nowrap;
+}
+
+// Generate grid classes for different breakpoints
+@mixin create-grid-classes($breakpoint: '') {
+    $prefix: if($breakpoint =='', '', '#{$breakpoint}-');
+
+    @for $i from 1 through 12 {
+        .#{$prefix}#{$i} {
+            flex-basis: ($i / 12) * 100%;
+            max-width: ($i / 12) * 100%;
+        }
+    }
+
+    .#{$prefix}auto {
+        flex-basis: auto;
+        max-width: none;
+    }
+}
+
+// Default (xs)
+@include create-grid-classes();
+
+// sm breakpoint
+@media (min-width: 600px) {
+    @include create-grid-classes('sm');
+}
+
+// md breakpoint
+@media (min-width: 900px) {
+    @include create-grid-classes('md');
+}
+
+// lg breakpoint
+@media (min-width: 1200px) {
+    @include create-grid-classes('lg');
+}
+
+// xl breakpoint
+@media (min-width: 1536px) {
+    @include create-grid-classes('xl');
+}

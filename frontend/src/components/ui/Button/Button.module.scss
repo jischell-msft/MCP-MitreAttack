@@ -1,0 +1,159 @@
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-family: inherit;
+    font-weight: 500;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .leftIcon,
+    .rightIcon {
+        display: flex;
+        align-items: center;
+    }
+
+    .leftIcon {
+        margin-right: 8px;
+    }
+
+    .rightIcon {
+        margin-left: 8px;
+    }
+}
+
+// Size variants
+.size-small {
+    font-size: 12px;
+    padding: 6px 12px;
+    height: 32px;
+    min-width: 64px;
+}
+
+.size-medium {
+    font-size: 14px;
+    padding: 8px 16px;
+    height: 40px;
+    min-width: 80px;
+}
+
+.size-large {
+    font-size: 16px;
+    padding: 12px 24px;
+    height: 48px;
+    min-width: 96px;
+}
+
+// Style variants
+.variant-primary {
+    background-color: var(--color-primary);
+    color: white;
+
+    &:hover:not(:disabled) {
+        background-color: var(--color-primary-dark);
+    }
+
+    &:active:not(:disabled) {
+        background-color: var(--color-primary-darker);
+    }
+}
+
+.variant-secondary {
+    background-color: var(--color-secondary);
+    color: white;
+
+    &:hover:not(:disabled) {
+        background-color: var(--color-secondary-dark);
+    }
+
+    &:active:not(:disabled) {
+        background-color: var(--color-secondary-darker);
+    }
+}
+
+.variant-outline {
+    background-color: transparent;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+
+    &:hover:not(:disabled) {
+        background-color: rgba(var(--color-primary-rgb), 0.05);
+    }
+
+    &:active:not(:disabled) {
+        background-color: rgba(var(--color-primary-rgb), 0.1);
+    }
+}
+
+.variant-text {
+    background-color: transparent;
+    color: var(--color-primary);
+
+    &:hover:not(:disabled) {
+        background-color: rgba(var(--color-primary-rgb), 0.05);
+    }
+
+    &:active:not(:disabled) {
+        background-color: rgba(var(--color-primary-rgb), 0.1);
+    }
+}
+
+.variant-danger {
+    background-color: var(--color-error);
+    color: white;
+
+    &:hover:not(:disabled) {
+        background-color: var(--color-error-dark);
+    }
+
+    &:active:not(:disabled) {
+        background-color: var(--color-error-darker);
+    }
+}
+
+// Full width
+.fullWidth {
+    width: 100%;
+}
+
+// Loading state
+.loading {
+    .content {
+        opacity: 0.7;
+    }
+
+    .spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin-top: -10px;
+        margin-left: -10px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg)
+    }
+}

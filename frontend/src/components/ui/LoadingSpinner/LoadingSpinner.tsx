@@ -1,27 +1,32 @@
 import React from 'react';
 import styles from './LoadingSpinner.module.scss';
 
-interface LoadingSpinnerProps {
+export interface LoadingSpinnerProps {
     size?: 'small' | 'medium' | 'large';
-    inline?: boolean;
+    color?: 'primary' | 'secondary' | 'white';
+    label?: string;
+    className?: string;
 }
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     size = 'medium',
-    inline = false
+    color = 'primary',
+    label,
+    className,
 }) => {
-    const containerClass = inline
-        ? styles.inlineContainer
-        : styles.fullContainer;
+    const spinnerClasses = [
+        styles.spinner,
+        styles[`size-${size}`],
+        styles[`color-${color}`],
+        className || '',
+    ].filter(Boolean).join(' ');
 
     return (
-        <div className={containerClass}>
-            <div className={`${styles.spinner} ${styles[size]}`}>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+        <div className={styles.container}>
+            <div className={spinnerClasses} role="status">
+                <span className={styles.visuallyHidden}>Loading...</span>
             </div>
+            {label && <p className={styles.label}>{label}</p>}
         </div>
     );
 };
