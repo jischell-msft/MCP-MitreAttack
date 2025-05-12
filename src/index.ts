@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
+import { AppServer } from './server';
+import { initializeDatabase } from './db/migration';
+import { logger } from './utils/logger';
 
 // Load environment variables
 dotenv.config();
@@ -21,6 +24,25 @@ app.use(morgan('dev')); // Logging
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Database initialization and server startup
+async function main() {
+    try {
+        // Initialize database
+        await initializeDatabase();
+        logger.info('Database initialized successfully');
+
+        // Start server
+        const server = new AppServer();
+        await server.start();
+    } catch (error: any) {
+        logger.error(`Failed to start application: ${error.message}`, { stack: error.stack });
+        process.exit(1);
+    }
+}
+
+// Start application
+main();
 
 // Start server
 app.listen(port, () => {
