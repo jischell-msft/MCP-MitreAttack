@@ -1,32 +1,39 @@
 .container {
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px;
+    gap: 1rem;
+}
+
+.loadingContainer,
+.errorContainer {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 0.5rem;
 }
 
 .breadcrumbs {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
+    font-size: 0.875rem;
 }
 
 .breadcrumbLink {
-    color: var(--color-text-secondary);
+    color: var(--color-primary);
     text-decoration: none;
 
     &:hover {
-        color: var(--color-primary);
+        text-decoration: underline;
     }
 }
 
@@ -35,65 +42,72 @@
 }
 
 .breadcrumbCurrent {
-    font-weight: 600;
+    color: var(--color-text);
+    font-weight: 500;
 }
 
 .actions {
     display: flex;
-    gap: 12px;
-}
+    gap: 0.75rem;
 
-.deleteButton {
-    color: var(--color-error);
-    border-color: var(--color-error);
+    .deleteButton {
+        color: var(--color-error);
+        border-color: var(--color-error);
 
-    &:hover {
-        background-color: rgba(var(--color-error-rgb), 0.1);
+        &:hover {
+            background-color: var(--color-error-light);
+        }
     }
 }
 
 .reportHeader {
-    margin-bottom: 24px;
-    padding: 24px;
+    padding: 1.25rem;
 }
 
 .sourceInfo {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 1rem;
 }
 
 .title {
+    font-size: 1.25rem;
+    font-weight: 600;
     margin: 0;
-    font-size: 1.5rem;
 }
 
 .urlSource,
 .fileSource {
     display: flex;
     align-items: center;
-    gap: 8px;
-}
+    gap: 0.5rem;
 
-.urlIcon,
-.fileIcon {
-    font-size: 1.2rem;
+    .urlIcon,
+    .fileIcon {
+        font-size: 1.25rem;
+    }
+
+    .sourceText {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
 }
 
 .metadata {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 1rem 2rem;
 }
 
 .metadataItem {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0.25rem;
 }
 
 .metadataLabel {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     color: var(--color-text-secondary);
 }
 
@@ -102,8 +116,8 @@
 }
 
 .highConfidenceText {
-    margin-left: 6px;
     color: var(--color-success);
+    margin-left: 0.5rem;
 }
 
 .contentCard {
@@ -111,34 +125,7 @@
     overflow: hidden;
 }
 
-.loadingContainer,
-.errorContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px;
-}
-
 .errorActions {
     display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-@media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-
-    .actions {
-        width: 100%;
-        justify-content: flex-end;
-    }
-
-    .metadata {
-        flex-direction: column;
-        gap: 12px;
-    }
+    gap: 0.75rem;
 }

@@ -217,7 +217,7 @@ export const ReportsListPage: React.FC = () => {
   ];
 
   return (
-          <div className={styles.container}>
+    <div className={styles.container}>
       <div className={styles.basicFilters}>
         <div className={styles.searchContainer}>
           <Input
@@ -1101,98 +1101,6 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
 };
 ```
 
-      <div className={styles.header}>
-        <h1 className={styles.title}>Analysis Reports</h1>
-        <Button
-          variant="primary"
-          onClick={() => navigate('/analyze')}
-        >
-          New Analysis
-        </Button>
-      </div>
-
-      <Card className={styles.filtersCard}>
-        <ReportFilters 
-          filters={filters} 
-          onChange={handleFilterChange} 
-        />
-      </Card>
-
-      <Card className={styles.tableCard}>
-        {isLoading ? (
-          <div className={styles.loading}>
-            <LoadingSpinner size="large" label="Loading reports..." />
-          </div>
-        ) : isError ? (
-          <div className={styles.error}>
-            <EmptyState
-              title="Error Loading Reports"
-              description={error.message || 'An error occurred while loading reports'}
-              action={
-                <Button 
-                  variant="primary"
-                  onClick={() => window.location.reload()}
-                >
-                  Retry
-                </Button>
-              }
-            />
-          </div>
-        ) : data?.reports.length === 0 ? (
-          <EmptyState
-            title="No Reports Found"
-            description="No analysis reports match your filters"
-            action={
-              <Button
-                variant="primary"
-                onClick={() => setFilters({
-                  page: 1,
-                  limit: 10,
-                  sortBy: 'timestamp',
-                  sortOrder: 'desc',
-                })}
-              >
-                Clear Filters
-              </Button>
-            }
-          />
-        ) : (
-          <>
-            <Table<ReportSummary>
-              data={data?.reports || []}
-              columns={columns}
-              onRowClick={handleRowClick}
-              keyExtractor={(row) => row.id}
-              emptyMessage="No reports found"
-            />
-            
-            {data?.pagination && (
-              <div className={styles.pagination}>
-                <Pagination
-                  currentPage={data.pagination.current}
-                  totalPages={data.pagination.pages}
-                  onPageChange={handlePageChange}
-                  disabled={isLoading}
-                />
-                
-                <div className={styles.paginationInfo}>
-                  Showing {(data.pagination.current - 1) * filters.limit + 1} to{' '}
-                  {Math.min(
-                    data.pagination.current * filters.limit,
-                    data.pagination.total
-                  )}{' '}
-                  of {data.pagination.total} reports
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </Card>
-    </div>
-  );
-};
-```
-
 ## Report Filters Component
 
 Create the filtering component:
@@ -1279,4 +1187,99 @@ export const ReportFilters: React.FC<ReportFiltersProps> = ({
 
   return (
     <div className={styles.container}>
+      <div className={styles.basicFilters}>
+        <div className={styles.searchContainer}>
+          <Input
+            placeholder="Search by URL or filename"
+            value={localFilters.url || ''}
+            onChange={(e) => handleChange('url', e.target.value)}
+            leftIcon={<span>🔍</span>}
+          />
+        </div>
+        
+        <div className={styles.sortContainer}>
+          <Select
+            options={sortOptions}
+            value={localFilters.sortBy}
+            onChange={(value) => handleChange('sortBy', value)}
+            placeholder="Sort by"
+            label="Sort by"
+          />
+        </div>
+        
+        <div className={styles.sortOrderContainer}>
+          <Select
+            options={sortOrderOptions}
+            value={localFilters.sortOrder}
+            onChange={(value) => handleChange('sortOrder', value)}
+            placeholder="Order"
+            label="Order"
+          />
+        </div>
+        
+        <div className={styles.actionsContainer}>
+          <Button
+            variant="outline"
+            onClick={toggleExpand}
+          >
+            {expanded ? 'Hide Filters' : 'More Filters'}
+          </Button>
+          
+          <Button
+            variant="primary"
+            onClick={handleApplyFilters}
+          >
+            Apply Filters
+          </Button>
+        </div>
+      </div>
       
+      {expanded && (
+        <div className={styles.advancedFilters}>
+          <div className={styles.dateRangeContainer}>
+            <DateRangePicker
+              startDate={localFilters.dateFrom}
+              endDate={localFilters.dateTo}
+              onDatesChange={({ startDate, endDate }) => {
+                handleChange('dateFrom', startDate);
+                handleChange('dateTo', endDate);
+              }}
+              label="Date Range"
+            />
+          </div>
+          
+          <div className={styles.minMatchesContainer}>
+            <Input
+              type="number"
+              label="Minimum Techniques"
+              value={localFilters.minMatches || ''}
+              onChange={(e) => handleChange('minMatches', parseInt(e.target.value) || undefined)}
+              min={0}
+            />
+          </div>
+          
+          <div className={styles.tacticsContainer}>
+            <Select
+              options={tacticsOptions}
+              value={localFilters.tactics || []}
+              onChange={(value) => handleChange('tactics', value)}
+              placeholder="Select Tactics"
+              label="Tactics"
+              multiple
+            />
+          </div>
+          
+          <div className={styles.resetContainer}>
+            <Button
+              variant="text"
+              onClick={handleResetFilters}
+            >
+              Reset Filters
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+```

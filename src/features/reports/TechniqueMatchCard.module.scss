@@ -1,28 +1,36 @@
 .card {
-    transition: all 0.2s ease;
+    transition: box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+    overflow: hidden;
+
+    &:hover {
+        box-shadow: var(--shadow-elevation-2);
+    }
 
     &.expanded {
-        box-shadow: var(--shadow-medium);
+        box-shadow: var(--shadow-elevation-2);
     }
 }
 
 .header {
-    padding: 16px;
+    padding: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
 }
 
 .techniqueInfo {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .techniqueId {
     font-family: monospace;
     font-weight: 600;
+    background-color: var(--color-background-alt);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
 
     a {
         color: var(--color-primary);
@@ -42,7 +50,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 4px;
+    gap: 0.25rem;
     min-width: 120px;
 }
 
@@ -50,56 +58,57 @@
     height: 8px;
     border-radius: 4px;
     width: 100%;
-    max-width: 100px;
-    background-color: #eaeaea;
+    background-color: var(--color-border);
 }
 
 .confidenceText {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 500;
 }
 
 .content {
-    padding: 0 16px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    padding: 0 1rem 1rem;
+    border-top: 1px solid var(--color-border);
 }
 
 .sectionTitle {
-    font-weight: 600;
-    font-size: 0.9rem;
+    margin: 1rem 0 0.5rem;
+    font-weight: 500;
     color: var(--color-text-secondary);
-    margin-bottom: 8px;
+    font-size: 0.875rem;
 }
 
 .matchedText {
-    background-color: rgba(var(--color-primary-rgb), 0.1);
-    padding: 8px;
-    border-radius: 4px;
+    background-color: var(--color-background-alt);
+    padding: 0.75rem;
+    border-radius: 0.25rem;
     font-family: monospace;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 .context {
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
     white-space: pre-wrap;
-    padding: 8px;
-    background-color: var(--color-background-light);
-    border-radius: 4px;
-    max-height: 200px;
-    overflow-y: auto;
+    overflow-wrap: break-word;
 }
 
 .highlightedText {
-    background-color: rgba(var(--color-primary-rgb), 0.2);
-    padding: 2px 0;
-    border-radius: 2px;
-    font-weight: 600;
+    background-color: rgba(251, 188, 4, 0.3);
+    padding: 0 0.125rem;
+    border-radius: 0.125rem;
+    font-weight: 500;
 }
 
 .actions {
+    margin-top: 1rem;
     display: flex;
     justify-content: flex-end;
-    margin-top: 8px;
 }
 
 @media (max-width: 576px) {
