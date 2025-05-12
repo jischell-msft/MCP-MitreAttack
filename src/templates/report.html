@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MITRE ATT&CK Analysis Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .report-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 14px;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        h2 {
+            color: #3498db;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #2980b9;
+        }
+
+        .summary-box {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .key-findings {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .key-findings li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .key-findings li:last-child {
+            border-bottom: none;
+        }
+
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            min-width: 150px;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .stat-box h4 {
+            margin-top: 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .stat-box p {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0 0;
+            color: #3498db;
+        }
+
+        .tactics-breakdown {
+            margin-bottom: 30px;
+        }
+
+        .tactic-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .tactic-name {
+            width: 200px;
+            font-weight: bold;
+        }
+
+        .tactic-bar-container {
+            flex-grow: 1;
+            background-color: #eee;
+            height: 20px;
+            position: relative;
+        }
+
+        .tactic-bar {
+            height: 100%;
+            background-color: #3498db;
+        }
+
+        .tactic-count {
+            width: 50px;
+            text-align: right;
+            padding-left: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .technique-id {
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .confidence-high {
+            color: #27ae60;
+        }
+
+        .confidence-medium {
+            color: #f39c12;
+        }
+
+        .confidence-low {
+            color: #e74c3c;
+        }
+
+        .match-context {
+            background-color: #f9f9f9;
+            border-left: 3px solid #3498db;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 14px;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #777;
+            font-size: 12px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>MITRE ATT&CK Analysis Report</h1>
+        <div class="report-meta">
+            <div>
+                <strong>Report ID:</strong> {{id}}
+            </div>
+            <div>
+                <strong>Generated:</strong> {{timestamp}}
+            </div>
+            <div>
+                <strong>MITRE Version:</strong> {{mitreDatabaseVersion}}
+            </div>
+        </div>
+        {{#if source.url}}
+        <div>
+            <strong>Source URL:</strong> {{source.url}}
+        </div>
+        {{/if}}
+        {{#if source.filename}}
+        <div>
+            <strong>Source File:</strong> {{source.filename}}
+        </div>
+        {{/if}}
+    </div>
+
+    <section>
+        <h2>Executive Summary</h2>
+        <div class="summary-box">
+            <div class="stats-row">
+                <div class="stat-box">
+                    <h4>Total Techniques</h4>
+                    <p>{{summary.matchCount}}</p>
+                </div>
+                <div class="stat-box">
+                    <h4>High Confidence</h4>
+                    <p>{{summary.highConfidenceCount}}</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Tactics Covered</h4>
+                    <p>{{tacticsCount}}</p>
+                </div>
+            </div>
+
+            <h3>Key Findings</h3>
+            <ul class="key-findings">
+                {{#each summary.keyFindings}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>Tactics Breakdown</h2>
+        <div class="tactics-breakdown">
+            {{#each summary.tacticsBreakdown}}
+            <div class="tactic-row">
+                <div class="tactic-name">{{@key}}</div>
+                <div class="tactic-bar-container">
+                    <div class="tactic-bar" style="width: {{percentage this ../maxTacticCount}}%"></div>
+                </div>
+                <div class="tactic-count">{{this}}</div>
+            </div>
+            {{/each}}
+        </div>
+    </section>
+
+    <section>
+        <h2>Top Techniques</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Technique ID</th>
+                    <th>Technique Name</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each summary.topTechniques}}
+                <tr>
+                    <td class="technique-id">{{id}}</td>
+                    <td>{{name}}</td>
+                    <td class="{{confidenceClass score}}">{{score}}%</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Detailed Matches</h2>
+        {{#each detailedMatches}}
+        <div class="match">
+            <h3>
+                <span class="technique-id">{{techniqueId}}</span>: {{techniqueName}}
+                <span class="{{confidenceClass confidenceScore}}">{{confidenceScore}}%</span>
+            </h3>
+            <div class="match-context">{{context}}</div>
+        </div>
+        {{/each}}
+    </section>
+
+    <footer>
+        <p>Generated by MITRE ATT&CK Analysis Platform</p>
+    </footer>
+</body>
+
+</html>
