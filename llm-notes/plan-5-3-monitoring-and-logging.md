@@ -531,7 +531,7 @@ const documentsProcessingErrorsCounter = new Counter({
 // Middleware to collect metrics
 export const metricsMiddleware = (req: Request, res: Response, next: NextFunction) => {
   // Skip metrics routes to avoid recursion
-  if (req.path === '/metrics') {
+  if (req.path === '/api/metrics') { // Changed from '/metrics' to '/api/metrics' for consistency with Prometheus config
     return next();
   }
   
@@ -1524,3 +1524,88 @@ Create a sample Grafana dashboard:
   "version": 1
 }
 ```
+
+## Testing the Monitoring and Logging System
+
+This section outlines key areas and example scenarios for testing the implemented monitoring and logging system, corresponding to task 5.3.8.
+
+### 5.3.8.1. Verify Log Output
+- **Objective**: Ensure logs are generated correctly, are structured, and contain necessary information.
+- **Scenarios**:
+    - Perform various actions in the application (e.g., API requests, document processing).
+    - Check console logs for readability and correct formatting (if applicable in dev).
+    - Inspect file logs (`all-%DATE%.log`, `error-%DATE%.log`) for:
+        - JSON structure.
+        - Presence of `timestamp`, `level`, `message`.
+        - Contextual information like `requestId`, `method`, `url`, `statusCode`, `duration` for HTTP logs.
+        - Error details including `stack`, `code` for error logs.
+    - Verify log levels are respected (e.g., `debug` logs not appearing in production if level is `info`).
+    - Confirm sensitive information is not logged (e.g., passwords, raw request bodies if sensitive).
+
+### 5.3.8.2. Test Error Tracking
+- **Objective**: Validate that errors are correctly tracked, logged, and categorized by the `ErrorTracker`.
+- **Scenarios**:
+    - Intentionally trigger different types of errors in the application (e.g., database error, validation error, unhandled exception).
+    - Verify that `errorTracker.trackError()` is called.
+    - Check that errors are logged with appropriate severity and details via the standard logger.
+    - Monitor `errorCount` in `ErrorTracker` (if accessible for testing) to see if counts for specific error keys increment.
+    - Simulate multiple occurrences of the same error to test threshold logic.
+
+### 5.3.8.3. Validate Alert Triggering
+- **Objective**: Ensure alerts are triggered and sent (or logged, as per current implementation) when error thresholds are met.
+- **Scenarios**:
+    - Trigger the same error type repeatedly to exceed `alertThreshold` (e.g., 5 times).
+    - Verify that an alert message is logged by `logger.warn` as specified in `ErrorTracker.sendAlert()`.
+    - Check that the alert log contains the error message, code, severity, count, and timestamp.
+    - After an alert, trigger the same error again. Verify that another alert is NOT immediately sent due to `alertCooldown`.
+    - Wait for the `alertCooldown` period to pass and trigger the error threshold again. Verify a new alert is generated.
+    - Test with different error types to ensure alerts are specific to error keys.
+
+### 5.3.8.4. Check Dashboard Functionality (Application Monitoring Dashboard)
+- **Objective**: Verify the custom monitoring dashboard displays data correctly and is usable.
+- **Scenarios**:
+    - Open the `MonitoringDashboard` in the frontend.
+    - Verify that system status (uptime, memory, disk, etc.) is displayed and appears accurate.
+    - Check that metrics charts (HTTP Requests, Avg Response Time, Memory Usage, Document Processing) load data.
+    - Perform actions that would affect these metrics (e.g., make API calls, process documents) and observe if the charts update (considering refresh interval).
+    - Test the refresh interval selection and manual refresh button.
+    - Simulate API errors for fetching status/metrics and verify the `ErrorMessage` component is shown.
+    - Check for any console errors in the browser while using the dashboard.
+
+### 5.3.8.5. Verify Log Rotation and Cleanup
+- **Objective**: Confirm that log files are rotated, archived, and old logs are cleaned up as per `log-manager.ts` configuration.
+- **Scenarios**:
+    - **Rotation by Size/Date**:
+        - Generate enough log data to exceed `maxSize` (e.g., '20m') or let the application run past midnight to trigger date-based rotation.
+        - Verify that new log files are created (e.g., `all-YYYY-MM-DD.log`, `all-YYYY-MM-DD.1.log` or `all-YYYY-MM-DD.log` and `all-YYYY-MM-DD-old.log.gz`).
+        - Confirm that logs are zipped (`zippedArchive: true`).
+    - **Max Files**:
+        - Simulate log generation over a period that would exceed `maxFiles` (e.g., '14d' for all logs, '30d' for error logs). This might require manually adjusting system time or creating dummy old log files for testing.
+        - Verify that older log files are removed to maintain the `maxFiles` limit.
+    - **Log Cleanup Job** (`setupLogCleanup` in `log-manager.ts`):
+        - Create dummy archived log files (`.gz`) with modification times older than 30 days in the `logs` directory.
+        - Manually trigger or wait for the cleanup interval (daily).
+        - Verify that these old archived files are deleted.
+        - Check application logs for messages related to log cleanup (e.g., "Deleted old log file" or any errors during cleanup).
+
+### 5.3.8.6. Test Prometheus Metrics Endpoint
+- **Objective**: Ensure the `/api/metrics` endpoint exposes metrics in the Prometheus format.
+- **Scenarios**:
+    - Access the `/api/metrics` endpoint.
+    - Verify the `Content-Type` is `text/plain; version=0.0.4; charset=utf-8` (or similar Prometheus content type).
+    - Check for the presence of defined metrics:
+        - `http_requests_total`
+        - `http_request_duration_ms`
+        - `process_memory_usage_bytes`
+        - `system_memory_usage_bytes`
+        - `documents_processed_total`
+        - `documents_processing_errors_total`
+    - Perform actions in the application and re-scrape the metrics endpoint to see if counters and gauges update.
+
+### 5.3.8.7. Verify Grafana Dashboard Integration (Conceptual)
+- **Objective**: If Grafana is set up, ensure it can scrape Prometheus and display the defined dashboards.
+- **Scenarios**:
+    - Ensure Prometheus is scraping the `/api/metrics` endpoint from the backend successfully (check Prometheus targets page).
+    - Import the provided Grafana dashboard JSON.
+    - Verify that panels in the Grafana dashboard populate with data from Prometheus.
+    - Check that queries in Grafana panels match the metrics exposed by the application.
