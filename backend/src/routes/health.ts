@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
-// Assuming getDatabase is correctly typed and exported from your db setup
+// Assuming getDatabase is correctly set up in your project structure
+// You might need to adjust the import path based on your actual db setup
 // import { getDatabase } from '../db/database'; 
 
 const router = express.Router();
@@ -10,15 +11,12 @@ const router = express.Router();
  */
 router.get('/health', async (req: Request, res: Response) => {
     try {
-        // Check database connection (example, replace with actual db check)
-        // const db = await getDatabase(); 
-        // await db.get('SELECT 1'); // This is a placeholder for an actual DB ping
+        // Check database connection (example, replace with your actual db check)
+        // const db = await getDatabase(); // Uncomment and use if you have getDatabase
+        // await db.get('SELECT 1'); // Uncomment and use if you have getDatabase
 
-        // Simulate a successful database check for now if getDatabase is not available
-        const dbStatus = 'connected'; // Placeholder: 'connected' or 'disconnected'
-        if (dbStatus !== 'connected') {
-            throw new Error('Database not connected');
-        }
+        // If db check is not yet implemented or not needed for basic health:
+        const dbStatus = 'not_checked'; // or 'connected' if you implement the check
 
         // Return health status
         return res.status(200).json({
@@ -32,7 +30,7 @@ router.get('/health', async (req: Request, res: Response) => {
         const err = error as Error;
         return res.status(500).json({
             status: 'unhealthy',
-            database: 'disconnected', // Or more specific error
+            database: 'disconnected', // or appropriate status
             error: err.message,
             timestamp: new Date().toISOString(),
         });

@@ -1,9 +1,20 @@
-iceglobal:
+global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
 scrape_configs:
   - job_name: 'caddy'
+    # metrics_path defaults to '/metrics'
     static_configs:
-      # Target the caddy-exporter service within the Docker network
+      # Target caddy-exporter service
       - targets: ['caddy-exporter:9989']
+  
+  # Example: Add scrape config for your backend application if it exposes Prometheus metrics
+  # - job_name: 'mcp-backend'
+  #   static_configs:
+  #     - targets: ['mcp-backend:3001'] # Assuming backend is on port 3001 and exposes /metrics
+
+  # Example: Add scrape config for Node Exporter if you run it on hosts
+  # - job_name: 'node_exporter'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']
