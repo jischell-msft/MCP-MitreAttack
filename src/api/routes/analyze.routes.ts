@@ -91,7 +91,18 @@ router.post('/', upload.single('document'), async (req, res, next) => {
         const validationResult = validateUploadedFile(req.file);
         if (!validationResult.valid) {
             // Remove invalid file
-            await fs.promises.unlink(req.file.path);
+            const uploadDir = path.join(process.cwd(), 'uploads');
+            const normalizedPath = path.resolve(req.file.path);
+            if (!normalizedPath.startsWith(uploadDir)) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                       code: 'INVALID_DOCUMENT_PATH',
+                       message: 'The uploaded document path is invalid'
+                   }
+               });
+            }
+            await fs.promises.unlink(normalizedPath);
 
             return res.status(400).json({
                 success: false,

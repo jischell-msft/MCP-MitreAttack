@@ -191,7 +191,13 @@ async function handleDocumentUpload(req: Request, res: Response, next: NextFunct
         // Clean up uploaded file in case of error
         if (req.file?.path) {
             try {
-                fs.unlinkSync(req.file.path);
+                const uploadDir = path.resolve('uploads'); // Define the safe root directory for uploads
+                const resolvedPath = path.resolve(req.file.path); // Normalize the file path
+                if (resolvedPath.startsWith(uploadDir)) { // Ensure the path is within the upload directory
+                    fs.unlinkSync(resolvedPath);
+                } else {
+                    logger.error(`Attempted to delete a file outside the upload directory: ${resolvedPath}`);
+                }
             } catch (e) {
                 logger.error(`Failed to clean up uploaded file: ${e}`);
             }
