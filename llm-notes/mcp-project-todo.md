@@ -45,14 +45,14 @@ This document tracks the implementation progress of the Multi-agent Coordination
 - [x] Create tests for FetchAgent
 
 ### 2.2 ParseAgent Development
-- [ ] Create ParseAgent interface and model
-- [ ] Implement STIX parser for ATT&CK data
-- [ ] Create technique model structure
-- [ ] Implement technique extraction logic
-- [ ] Create technique indexing for search
-- [ ] Add relationship mapping between techniques
-- [ ] Implement filtering capabilities
-- [ ] Create tests for ParseAgent
+- [x] Create ParseAgent interface and model
+- [x] Implement STIX parser for ATT&CK data
+- [x] Create technique model structure
+- [x] Implement technique extraction logic
+- [x] Create technique indexing for search
+- [x] Add relationship mapping between techniques
+- [x] Implement filtering capabilities
+- [x] Create tests for ParseAgent
 
 ### 2.3 DocIngestAgent Development
 - [ ] Create DocIngestAgent interface and model
