@@ -127,18 +127,8 @@ export const AnalysisPage: React.FC = () => {
     };
 
     const addToRecentSubmissions = (submission: any) => {
-        // Implementation uses the RecentSubmissions component's logic
-        const submissionWithId = {
-            ...submission,
-            id: `submission-${Date.now()}`,
-            status: 'processing'
-        };
-
-        // Use DOM events to communicate with the RecentSubmissions component
-        const event = new CustomEvent('new-submission', {
-            detail: submissionWithId
-        });
-        window.dispatchEvent(event);
+        // Implementation for adding to recent submissions
+        // (Will be implemented in RecentSubmissions component)
     };
 
     return (

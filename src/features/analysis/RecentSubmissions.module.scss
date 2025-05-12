@@ -1,0 +1,101 @@
+.container {
+    height: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.item {
+    display: flex;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color-light);
+    align-items: center;
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.icon {
+    margin-right: 0.75rem;
+    font-size: 1.25rem;
+}
+
+.urlIcon,
+.fileIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--background-secondary);
+}
+
+.details {
+    flex: 1;
+    min-width: 0;
+}
+
+.name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.meta {
+    display: flex;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.time {
+    margin-right: 0.75rem;
+}
+
+.status {
+    padding: 0.125rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.completed {
+    background-color: var(--success-light);
+    color: var(--success);
+}
+
+.failed {
+    background-color: var(--error-light);
+    color: var(--error);
+}
+
+.processing,
+.pending {
+    background-color: var(--warning-light);
+    color: var(--warning);
+}
+
+.actions {
+    margin-left: 1rem;
+}

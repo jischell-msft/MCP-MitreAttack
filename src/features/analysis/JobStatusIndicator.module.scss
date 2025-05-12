@@ -1,0 +1,50 @@
+.container {
+    margin-bottom: 1.5rem;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.jobId {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.status {
+    margin-bottom: 1rem;
+}
+
+.statusText {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.elapsed {
+    color: var(--text-secondary);
+}
+
+.error {
+    color: var(--error);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+}

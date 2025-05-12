@@ -42,17 +42,6 @@ export const RecentSubmissions: React.FC = () => {
         };
 
         loadSubmissions();
-
-        // Listen for new submissions from parent component
-        const handleNewSubmission = (e: CustomEvent) => {
-            addSubmission(e.detail);
-        };
-
-        window.addEventListener('new-submission' as any, handleNewSubmission as any);
-
-        return () => {
-            window.removeEventListener('new-submission' as any, handleNewSubmission as any);
-        };
     }, []);
 
     const saveSubmissions = (subs: Submission[]) => {
@@ -86,11 +75,8 @@ export const RecentSubmissions: React.FC = () => {
     };
 
     const handleResubmit = (submission: Submission) => {
-        // This would typically dispatch an action or call a parent callback
-        const event = new CustomEvent('resubmit-submission', {
-            detail: submission
-        });
-        window.dispatchEvent(event);
+        // Implement resubmission logic
+        // This would typically call back to the parent component
     };
 
     if (submissions.length === 0) {
