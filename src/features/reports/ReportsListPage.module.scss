@@ -1,0 +1,112 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.filtersCard {
+    padding: 1.25rem;
+}
+
+.tableCard {
+    padding: 1rem;
+}
+
+.loading,
+.error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+.pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1.5rem;
+    gap: 1rem;
+
+    @media (min-width: 768px) {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.paginationInfo {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+/* Table cell styling */
+.sourceCell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.urlIcon,
+.fileIcon {
+    flex-shrink: 0;
+}
+
+.sourceText {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.matchCountCell {
+    display: flex;
+    flex-direction: column;
+}
+
+.highConfidenceCount {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
+
+.topTechniquesCell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.techniqueBadge {
+    background-color: var(--color-background-secondary);
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    font-family: monospace;
+}
+
+.actionsCell {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Column styling */
+.sourceColumn {
+    max-width: 300px;
+}
+
+.dateColumn {
+    white-space: nowrap;
+}

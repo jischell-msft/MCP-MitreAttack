@@ -1,0 +1,70 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.basicFilters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+
+    @media (min-width: 768px) {
+        grid-template-columns: minmax(250px, 3fr) minmax(140px, 1fr) minmax(140px, 1fr) auto;
+    }
+}
+
+.searchContainer {
+    grid-column: 1 / -1;
+
+    @media (min-width: 768px) {
+        grid-column: 1;
+    }
+}
+
+.actionsContainer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    grid-column: 1 / -1;
+
+    @media (min-width: 768px) {
+        grid-column: 4;
+    }
+}
+
+.advancedFilters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+
+    @media (min-width: 768px) {
+        grid-template-columns: 2fr 1fr 1fr;
+    }
+}
+
+.dateRangeContainer {
+    grid-column: 1 / -1;
+
+    @media (min-width: 768px) {
+        grid-column: 1;
+    }
+}
+
+.tacticsContainer {
+    grid-column: 1 / -1;
+
+    @media (min-width: 768px) {
+        grid-column: 2 / -1;
+    }
+}
+
+.resetContainer {
+    display: flex;
+    justify-content: flex-end;
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+}
