@@ -1,105 +1,122 @@
 .card {
-    margin-bottom: 1rem;
-    transition: all 0.2s ease;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    overflow: hidden;
 
-    &.expanded {
-        border-color: var(--color-primary);
+    &:hover {
+        transform: translateY(-2px);
     }
+}
 
-    .header {
-        display: flex;
-        justify-content: space-between;
-        padding: 1rem;
-        cursor: pointer;
+.expanded {
+    box-shadow: var(--shadow-medium);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.techniqueInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.techniqueId {
+    font-family: monospace;
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    a {
+        color: var(--color-primary);
+        text-decoration: none;
 
         &:hover {
-            background-color: var(--color-background-hover);
-        }
-
-        .techniqueInfo {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-
-            .techniqueId {
-                font-family: monospace;
-                font-weight: 600;
-                font-size: 1.1rem;
-
-                a {
-                    color: var(--color-primary);
-                    text-decoration: none;
-
-                    &:hover {
-                        text-decoration: underline;
-                    }
-                }
-            }
-
-            .techniqueName {
-                font-size: 1rem;
-            }
-        }
-
-        .confidenceScore {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            min-width: 120px;
-
-            .confidenceBar {
-                height: 6px;
-                border-radius: 3px;
-                margin-bottom: 0.25rem;
-            }
-
-            .confidenceText {
-                font-size: 0.875rem;
-                font-weight: 500;
-            }
+            text-decoration: underline;
         }
     }
+}
 
-    .content {
-        padding: 0 1rem 1rem;
-        border-top: 1px solid var(--color-border);
+.techniqueName {
+    font-weight: 500;
+}
 
-        .sectionTitle {
-            font-weight: 500;
-            margin: 1rem 0 0.5rem;
-            color: var(--color-text-secondary);
-            font-size: 0.875rem;
-        }
+.confidenceScore {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
 
-        .matchedText {
-            background-color: var(--color-background-accent);
-            padding: 0.75rem;
-            border-radius: 4px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
+.confidenceBar {
+    height: 0.5rem;
+    min-width: 4px;
+    border-radius: 0.25rem;
+}
 
-        .context {
-            padding: 0.75rem;
-            border: 1px solid var(--color-border);
-            border-radius: 4px;
-            margin-bottom: 1rem;
-            white-space: pre-wrap;
-            word-break: break-word;
+.confidenceText {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+}
 
-            .highlightedText {
-                background-color: rgba(255, 213, 79, 0.3);
-                border-radius: 2px;
-                padding: 0 2px;
-                font-weight: 500;
-            }
-        }
+.content {
+    padding: 0 1rem 1rem;
+    border-top: 1px solid var(--color-border);
+}
 
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 1rem;
-        }
+.sectionTitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin: 1rem 0 0.25rem;
+}
+
+.matchedText {
+    font-family: monospace;
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    background-color: var(--color-background-secondary);
+    border-radius: 0.25rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.context {
+    font-family: monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    padding: 0.75rem;
+    background-color: var(--color-background-secondary);
+    border-radius: 0.25rem;
+}
+
+.highlightedText {
+    background-color: rgba(var(--color-primary-rgb), 0.2);
+    font-weight: 500;
+    padding: 0.125rem 0;
+    border-radius: 0.125rem;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .confidenceScore {
+        align-items: flex-start;
+        width: 100%;
     }
 }

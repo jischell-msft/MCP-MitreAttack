@@ -15,34 +15,34 @@
         .title {
             font-size: 1.75rem;
             font-weight: 600;
-            color: var(--color-text-primary);
             margin: 0;
         }
     }
 
     .filtersCard {
         padding: 1rem;
-        margin-bottom: 1rem;
     }
 
     .tableCard {
-        padding: 0;
-        overflow: hidden;
+        padding: 1rem;
 
-        .loading,
-        .error {
-            padding: 2rem;
+        .loading {
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 3rem 0;
+        }
+
+        .error {
+            padding: 1rem 0;
         }
 
         .pagination {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            padding: 1rem;
-            border-top: 1px solid var(--color-border);
+            padding-top: 1.5rem;
+            gap: 1rem;
 
             .paginationInfo {
                 color: var(--color-text-secondary);
@@ -50,53 +50,71 @@
             }
         }
     }
+}
 
-    // Table cell styles
-    .sourceCell {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+// Table cell styling
+.sourceCell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 
-        .urlIcon,
-        .fileIcon {
-            font-size: 1rem;
-        }
-
-        .sourceText {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 300px;
-        }
+    .urlIcon,
+    .fileIcon {
+        font-size: 1rem;
     }
 
-    .matchCountCell {
-        .matchCount {
-            font-weight: 500;
-            margin-right: 0.25rem;
-        }
+    .sourceText {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 400px;
+    }
+}
 
-        .highConfidenceCount {
-            color: var(--color-text-secondary);
-            font-size: 0.875rem;
-        }
+.matchCountCell {
+    display: flex;
+    flex-direction: column;
+
+    .matchCount {
+        font-weight: 500;
     }
 
-    .topTechniquesCell {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.25rem;
+    .highConfidenceCount {
+        font-size: 0.75rem;
+        color: var(--color-text-secondary);
+    }
+}
 
-        .techniqueBadge {
-            background-color: var(--color-background-accent);
-            border-radius: 4px;
-            padding: 0.125rem 0.375rem;
-            font-size: 0.75rem;
-            font-family: monospace;
-        }
+.topTechniquesCell {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+
+    .techniqueBadge {
+        background-color: var(--color-background-secondary);
+        color: var(--color-text);
+        font-size: 0.75rem;
+        padding: 0.1875rem 0.375rem;
+        border-radius: 4px;
+        font-family: monospace;
+    }
+}
+
+.actionsCell {
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
     }
 
-    .actionsCell {
-        text-align: right;
+    .sourceText {
+        max-width: 200px;
+    }
+
+    .pagination {
+        padding-top: 1rem;
     }
 }
