@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  caddy-exporter:
+    image: caddy/caddy-exporter:latest # Use a specific version in production
+    container_name: mcp-caddy-exporter
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9989:9989" # Expose only on localhost for security
+    environment:
+      # Assumes Caddy's admin API is accessible at http://caddy:2019
+      # Ensure your main Caddy service has its admin API enabled and accessible within the Docker network
+      # Example Caddyfile global option: admin 0.0.0.0:2019 (be careful with exposing admin API)
+      # Or, if Caddy admin API is off or on a different endpoint, adjust CADDY_ADMIN_URL
+      - CADDY_ADMIN_URL=http://mcp-caddy:2019 # Use service name 'mcp-caddy'
+    networks:
+      - mcp-network # Ensure this network is defined in your main docker-compose.yml or here
+    depends_on:
+      - mcp-caddy # Assuming your Caddy service is named mcp-caddy
+
+  prometheus:
+    image: prom/prometheus:latest # Use a specific version in production
+    container_name: mcp-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090" # Expose only on localhost for security
+    networks:
+      - mcp-network
+    depends_on:
+      - caddy-exporter
+
+  grafana:
+    image: grafana/grafana:latest # Use a specific version in production
+    container_name: mcp-grafana
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3000:3000" # Expose only on localhost for security
+    networks:
+      - mcp-network
+    depends_on:
+      - prometheus
+
+volumes:
+  prometheus-data:
+    name: mcp-prometheus-data
+  grafana-data:
+    name: mcp-grafana-data
+
+networks:
+  mcp-network:
+    # If mcp-network is defined in your main docker-compose.yml, make it external here
+    # external: true
+    # Otherwise, define it here if this is a standalone monitoring stack
+    name: mcp-network # Ensure this matches the network used by Caddy and other services

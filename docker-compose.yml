@@ -48,7 +48,7 @@ services:
       - mcp-network
 
   caddy:
-    image: caddy:2-alpine
+    image: caddy:2.7-alpine
     container_name: mcp-caddy
     restart: unless-stopped
     volumes:
@@ -58,11 +58,15 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "443:443/udp"
     environment:
       - DOMAIN=${DOMAIN:-localhost}
+      - EMAIL=${EMAIL:-your-email@example.com}
     depends_on:
-      - backend
-      - frontend
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
     networks:
       - mcp-network
 

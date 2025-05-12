@@ -1,0 +1,9 @@
+iceglobal:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'caddy'
+    static_configs:
+      # Target the caddy-exporter service within the Docker network
+      - targets: ['caddy-exporter:9989']
