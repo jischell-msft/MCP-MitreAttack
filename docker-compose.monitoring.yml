@@ -1,55 +1,37 @@
 version: '3.8'
 
 services:
-  caddy-exporter:
-    image: caddy/caddy-exporter:latest # Use a specific version in production
-    container_name: mcp-caddy-exporter
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:9989:9989" # Expose only on localhost for security
-    environment:
-      # Assumes Caddy's admin API is accessible at http://caddy:2019
-      # Ensure your main docker-compose.yml configures Caddy's admin API if not default.
-      # Caddy's admin API is on by default unless 'admin off' is in global options.
-      # If 'admin off' is used, this exporter won't work.
-      # Consider CADDY_ADMIN_ENDPOINT if Caddy is not named 'caddy' or on a different port.
-      - CADDY_ADMIN_URL=http://mcp-caddy:2019 # Assuming caddy service is named mcp-caddy
-    networks:
-      - mcp-network # Ensure this network is defined in your main docker-compose.yml or here
-    depends_on:
-      - mcp-caddy # Optional: if mcp-caddy is defined in this file or you want to ensure order
-
   prometheus:
-    image: prom/prometheus:latest # Use a specific version in production
+    image: prom/prometheus:latest
     container_name: mcp-prometheus
-    restart: unless-stopped
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     ports:
-      - "127.0.0.1:9090:9090" # Expose only on localhost
+      - "127.0.0.1:9090:9090"
     networks:
-      - mcp-network
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - mcp-network # Ensure this network is defined in your main docker-compose.yml or here
+    restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:latest # Use a specific version in production
+    image: grafana/grafana:latest
     container_name: mcp-grafana
-    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      # Example for provisioning datasources and dashboards
+      # - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning # For datasources.yml, dashboards.yml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards # For dashboard JSON files
     ports:
-      - "127.0.0.1:3000:3000" # Expose only on localhost
+      - "127.0.0.1:3003:3000" # Changed from 3000:3000 to 3003:3000 to avoid common conflicts
     networks:
       - mcp-network
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=grafana # Change in production
-      # You can pre-configure datasources and dashboards if needed
+    restart: unless-stopped
+    depends_on:
+      - prometheus
 
 volumes:
   prometheus-data:
@@ -59,13 +41,8 @@ volumes:
 
 networks:
   mcp-network:
-    # If this file is used alongside a main docker-compose.yml that defines mcp-network:
-    external: true
-    # If this file is standalone, define the network:
-    # name: mcp-network 
-    # driver: bridge
-
-    # Note: Ensure the 'mcp-caddy' service is accessible by 'caddy-exporter'.
-    # If Caddy is in a different docker-compose file, ensure network connectivity.
-    # If Caddy's admin API is disabled ('admin off' in Caddyfile global options),
-    # caddy-exporter will not function. Metrics via admin API is the common way.
+    # If this network is defined in another docker-compose file and is intended to be shared,
+    # mark it as external. Otherwise, define it here.
+    # external: true 
+    name: mcp-network # Explicitly naming it, can be omitted if default name is fine
+    driver: bridge # Default driver

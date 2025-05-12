@@ -1,20 +1,35 @@
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
+  scrape_timeout: 10s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093 # Uncomment and configure if using Alertmanager
+
+rule_files:
+  # - "alerts.yml" # Uncomment and create if using Prometheus alerting rules
 
 scrape_configs:
-  - job_name: 'caddy'
-    # metrics_path defaults to '/metrics'
+  - job_name: 'prometheus'
+    # Metrics endpoint for Prometheus itself
     static_configs:
-      # Target caddy-exporter service
-      - targets: ['caddy-exporter:9989']
-  
-  # Example: Add scrape config for your backend application if it exposes Prometheus metrics
-  # - job_name: 'mcp-backend'
-  #   static_configs:
-  #     - targets: ['mcp-backend:3001'] # Assuming backend is on port 3001 and exposes /metrics
+      - targets: ['localhost:9090']
 
-  # Example: Add scrape config for Node Exporter if you run it on hosts
-  # - job_name: 'node_exporter'
+  - job_name: 'backend'
+    # Metrics endpoint for your MCP application
+    metrics_path: '/api/metrics' # Ensure this matches your Express route for metrics
+    static_configs:
+      # Replace 'backend:3001' with the actual service name and port
+      # if your backend runs in a different container or on a different host/port.
+      # For local development where backend runs on host: host.docker.internal:PORT or localhost:PORT
+      # If backend is another service in the same docker-compose network: backend_service_name:PORT
+      - targets: ['host.docker.internal:3001'] # Example for backend running on host machine, accessible from Docker
+      # - targets: ['backend_container_name:3001'] # Example if backend is another docker service
+
+  # Example for Caddy if you are using it and it exposes Prometheus metrics
+  # - job_name: 'caddy'
   #   static_configs:
-  #     - targets: ['node-exporter:9100']
+  #     - targets: ['caddy_service_name:2019'] # Or wherever Caddy metrics are exposed
