@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner/LoadingSpinner';
@@ -14,9 +14,43 @@ import { ReportsService } from '../../services/api/reports-service';
 import { formatDate } from '../../utils/date-utils';
 import styles from './ReportDetailPage.module.scss';
 
+// Placeholder for ReportDetail type, adjust as per actual API response
+interface ReportDetail {
+    id: string;
+    source: {
+        url?: string;
+        filename?: string;
+    };
+    timestamp: string;
+    mitreDatabaseVersion: string;
+    summary: {
+        matchCount: number;
+        highConfidenceCount: number;
+        tacticsBreakdown: Record<string, number>;
+        // Potentially other summary fields
+    };
+    detailedMatches: TechniqueMatch[]; // Using TechniqueMatch from TechniqueMatchesList
+    // other fields
+}
+
+// TechniqueMatch interface (can be imported from a shared types file)
+interface TechniqueMatch {
+    techniqueId: string;
+    techniqueName: string;
+    confidenceScore: number;
+    matchedText: string;
+    context: string;
+    textPosition?: {
+        startChar: number;
+        endChar: number;
+    };
+    tactics?: string[]; // Added for TacticsHeatmap if needed
+}
+
 export const ReportDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const queryClient = useQueryClient(); // For invalidating queries on mutation
     const [activeTab, setActiveTab] = useState<'summary' | 'techniques' | 'heatmap'>('summary');
     const [exportModalOpen, setExportModalOpen] = useState(false);
 
@@ -26,10 +60,22 @@ export const ReportDetailPage: React.FC = () => {
         isLoading,
         isError,
         error
-    } = useQuery({
+    } = useQuery<ReportDetail, Error>({
         queryKey: ['report', id],
-        queryFn: () => id ? ReportsService.getReportById(id) : Promise.reject('No report ID provided'),
+        queryFn: () => id ? ReportsService.getReportById(id) : Promise.reject(new Error('No report ID provided')),
         enabled: !!id,
+    });
+
+    const deleteMutation = useMutation<void, Error, string>({
+        mutationFn: (reportId: string) => ReportsService.deleteReport(reportId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['reports'] }); // Invalidate list of reports
+            navigate('/reports');
+        },
+        onError: (err) => {
+            console.error('Error deleting report:', err);
+            alert('Failed to delete report: ' + (err.message || 'Unknown error'));
+        }
     });
 
     const handleExport = () => {
@@ -37,23 +83,16 @@ export const ReportDetailPage: React.FC = () => {
     };
 
     const handleDelete = async () => {
-        if (!id || !window.confirm('Are you sure you want to delete this report?')) {
-            return;
-        }
-
-        try {
-            await ReportsService.deleteReport(id);
-            navigate('/reports');
-        } catch (error) {
-            console.error('Error deleting report:', error);
-            alert('Failed to delete report: ' + (error.message || 'Unknown error'));
+        if (!id) return;
+        if (window.confirm('Are you sure you want to delete this report? This action cannot be undone.')) {
+            deleteMutation.mutate(id);
         }
     };
 
     if (isLoading) {
         return (
             <div className={styles.loadingContainer}>
-                <LoadingSpinner size="large" label="Loading report..." />
+                <LoadingSpinner size="large" label="Loading report details..." />
             </div>
         );
     }
@@ -64,18 +103,19 @@ export const ReportDetailPage: React.FC = () => {
                 <Card>
                     <EmptyState
                         title="Error Loading Report"
-                        description={error.message || 'An error occurred while loading the report'}
+                        description={error?.message || 'An error occurred while loading the report details.'}
+                        icon={<span>💔</span>}
                         action={
                             <div className={styles.errorActions}>
                                 <Button
                                     variant="outline"
                                     onClick={() => navigate('/reports')}
                                 >
-                                    Back to Reports
+                                    Back to Reports List
                                 </Button>
                                 <Button
                                     variant="primary"
-                                    onClick={() => window.location.reload()}
+                                    onClick={() => queryClient.refetchQueries({ queryKey: ['report', id] })}
                                 >
                                     Retry
                                 </Button>
@@ -93,13 +133,14 @@ export const ReportDetailPage: React.FC = () => {
                 <Card>
                     <EmptyState
                         title="Report Not Found"
-                        description="The requested report could not be found"
+                        description="The requested report could not be found or may have been deleted."
+                        icon={<span>🤷</span>}
                         action={
                             <Button
                                 variant="primary"
                                 onClick={() => navigate('/reports')}
                             >
-                                Back to Reports
+                                Back to Reports List
                             </Button>
                         }
                     />
@@ -122,25 +163,28 @@ export const ReportDetailPage: React.FC = () => {
                         variant="outline"
                         onClick={handleExport}
                     >
-                        Export
+                        Export Report
                     </Button>
                     <Button
-                        variant="outline"
+                        variant="danger" // Changed to danger for delete
                         onClick={handleDelete}
                         className={styles.deleteButton}
+                        loading={deleteMutation.isLoading}
                     >
-                        Delete
+                        Delete Report
                     </Button>
                 </div>
             </div>
 
-            <Card className={styles.reportHeader}>
+            <Card className={styles.reportHeaderCard}>
                 <div className={styles.sourceInfo}>
                     <h1 className={styles.title}>
                         {report.source.url ? (
                             <div className={styles.urlSource}>
                                 <span className={styles.urlIcon}>🔗</span>
-                                <span className={styles.sourceText}>{report.source.url}</span>
+                                <a href={report.source.url} target="_blank" rel="noopener noreferrer" className={styles.sourceLink}>
+                                    {report.source.url}
+                                </a>
                             </div>
                         ) : report.source.filename ? (
                             <div className={styles.fileSource}>
@@ -167,9 +211,11 @@ export const ReportDetailPage: React.FC = () => {
                             <span className={styles.metadataLabel}>Techniques Detected:</span>
                             <span className={styles.metadataValue}>
                                 {report.summary.matchCount}
-                                <span className={styles.highConfidenceText}>
-                                    ({report.summary.highConfidenceCount} high confidence)
-                                </span>
+                                {report.summary.highConfidenceCount > 0 && (
+                                    <span className={styles.highConfidenceText}>
+                                        ({report.summary.highConfidenceCount} high confidence)
+                                    </span>
+                                )}
                             </span>
                         </div>
                     </div>
@@ -179,13 +225,13 @@ export const ReportDetailPage: React.FC = () => {
             <Card className={styles.contentCard}>
                 <Tabs
                     activeTab={activeTab}
-                    onChange={(tab) => setActiveTab(tab as any)}
+                    onChange={(tabId) => setActiveTab(tabId as 'summary' | 'techniques' | 'heatmap')}
                 >
                     <Tab id="summary" label="Summary">
                         <ReportSummaryView summary={report.summary} />
                     </Tab>
 
-                    <Tab id="techniques" label="Technique Matches">
+                    <Tab id="techniques" label={`Technique Matches (${report.detailedMatches.length})`}>
                         <TechniqueMatchesList matches={report.detailedMatches} />
                     </Tab>
 
@@ -198,11 +244,13 @@ export const ReportDetailPage: React.FC = () => {
                 </Tabs>
             </Card>
 
-            <ExportReportModal
-                isOpen={exportModalOpen}
-                onClose={() => setExportModalOpen(false)}
-                reportId={id!}
-            />
+            {id && (
+                <ExportReportModal
+                    isOpen={exportModalOpen}
+                    onClose={() => setExportModalOpen(false)}
+                    reportId={id}
+                />
+            )}
         </div>
     );
 };

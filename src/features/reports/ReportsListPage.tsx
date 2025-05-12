@@ -28,7 +28,7 @@ export const ReportsListPage: React.FC = () => {
         isLoading,
         isError,
         error
-    } = useQuery({
+    } = useQuery<{ reports: ReportSummary[]; totalPages: number; totalRecords: number }, Error>({
         queryKey: ['reports', filters],
         queryFn: () => ReportsService.getReports(filters),
         keepPreviousData: true, // Keep old data while fetching new data
@@ -43,8 +43,8 @@ export const ReportsListPage: React.FC = () => {
     };
 
     const handleFilterChange = (newFilters: Partial<FilterParams>) => {
-        // Reset to page 1 when filters change
-        setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
+        // Reset to page 1 when filters change, unless page is explicitly set in newFilters
+        setFilters(prev => ({ ...prev, ...newFilters, page: newFilters.page || 1 }));
     };
 
     // Table column definitions
@@ -76,7 +76,7 @@ export const ReportsListPage: React.FC = () => {
             header: 'Date',
             accessor: (row) => formatDistanceToNow(new Date(row.timestamp), { addSuffix: true }),
             width: '15%',
-            sortable: true,
+            sortable: true, // Assuming Table component handles this
             className: styles.dateColumn,
         },
         {
@@ -84,20 +84,22 @@ export const ReportsListPage: React.FC = () => {
             accessor: (row) => (
                 <div className={styles.matchCountCell}>
                     <span className={styles.matchCount}>{row.matchCount}</span>
-                    <span className={styles.highConfidenceCount}>
-                        ({row.highConfidenceCount} high confidence)
-                    </span>
+                    {row.highConfidenceCount > 0 && (
+                        <span className={styles.highConfidenceCount}>
+                            ({row.highConfidenceCount} high confidence)
+                        </span>
+                    )}
                 </div>
             ),
             width: '20%',
-            sortable: true,
+            sortable: true, // Assuming Table component handles this
             className: styles.matchCountColumn,
         },
         {
             header: 'Top Techniques',
             accessor: (row) => (
                 <div className={styles.topTechniquesCell}>
-                    {row.topTechniques.map((technique, index) => (
+                    {row.topTechniques && row.topTechniques.slice(0, 3).map((technique) => ( // Display max 3
                         <span key={technique.id} className={styles.techniqueBadge}>
                             {technique.id}
                         </span>
@@ -115,7 +117,7 @@ export const ReportsListPage: React.FC = () => {
                         variant="outline"
                         size="small"
                         onClick={(e) => {
-                            e.stopPropagation();
+                            e.stopPropagation(); // Prevent row click if button is clicked
                             navigate(`/reports/${row.id}`);
                         }}
                     >
@@ -130,89 +132,46 @@ export const ReportsListPage: React.FC = () => {
 
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
-                <h1 className={styles.title}>Analysis Reports</h1>
-                <Button
-                    variant="primary"
-                    onClick={() => navigate('/analyze')}
-                >
-                    New Analysis
-                </Button>
-            </div>
-
-            <Card className={styles.filtersCard}>
-                <ReportFilters
-                    filters={filters}
-                    onChange={handleFilterChange}
-                />
+            <Card className={styles.filterCard} elevation={1}>
+                <ReportFilters filters={filters} onChange={handleFilterChange} />
             </Card>
 
-            <Card className={styles.tableCard}>
-                {isLoading ? (
-                    <div className={styles.loading}>
+            <Card className={styles.resultsCard} elevation={1}>
+                {isLoading && (
+                    <div className={styles.loadingContainer}>
                         <LoadingSpinner size="large" label="Loading reports..." />
                     </div>
-                ) : isError ? (
-                    <div className={styles.error}>
-                        <EmptyState
-                            title="Error Loading Reports"
-                            description={error.message || 'An error occurred while loading reports'}
-                            action={
-                                <Button
-                                    variant="primary"
-                                    onClick={() => window.location.reload()}
-                                >
-                                    Retry
-                                </Button>
-                            }
-                        />
-                    </div>
-                ) : data?.reports.length === 0 ? (
+                )}
+                {isError && error && (
+                    <EmptyState
+                        title="Error Loading Reports"
+                        description={error.message || 'An unexpected error occurred while fetching reports.'}
+                        icon={<span>⚠️</span>} // Example icon
+                    />
+                )}
+                {!isLoading && !isError && (!data || data.reports.length === 0) && (
                     <EmptyState
                         title="No Reports Found"
-                        description="No analysis reports match your filters"
-                        action={
-                            <Button
-                                variant="primary"
-                                onClick={() => setFilters({
-                                    page: 1,
-                                    limit: 10,
-                                    sortBy: 'timestamp',
-                                    sortOrder: 'desc',
-                                })}
-                            >
-                                Clear Filters
-                            </Button>
-                        }
+                        description="No reports match your current filter criteria. Try adjusting your filters."
+                        icon={<span>📂</span>} // Example icon
                     />
-                ) : (
+                )}
+                {!isLoading && !isError && data && data.reports.length > 0 && (
                     <>
-                        <Table<ReportSummary>
-                            data={data?.reports || []}
+                        <Table
                             columns={columns}
+                            data={data.reports}
                             onRowClick={handleRowClick}
-                            keyExtractor={(row) => row.id}
-                            emptyMessage="No reports found"
+                            className={styles.reportsTable}
+                        // Add other table props like sort state if managed here
                         />
-
-                        {data?.pagination && (
-                            <div className={styles.pagination}>
-                                <Pagination
-                                    currentPage={data.pagination.current}
-                                    totalPages={data.pagination.pages}
-                                    onPageChange={handlePageChange}
-                                    disabled={isLoading}
-                                />
-
-                                <div className={styles.paginationInfo}>
-                                    Showing {(data.pagination.current - 1) * filters.limit + 1} to{' '}
-                                    {Math.min(
-                                        data.pagination.current * filters.limit,
-                                        data.pagination.total
-                                    )}{' '}
-                                    of {data.pagination.total} reports
-                                </div>
-                            </div>
+                        {data.totalPages > 1 && (
+                            <Pagination
+                                currentPage={filters.page}
+                                totalPages={data.totalPages}
+                                onPageChange={handlePageChange}
+                                className={styles.pagination}
+                            />
                         )}
                     </>
                 )}

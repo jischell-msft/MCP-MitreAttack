@@ -2,117 +2,159 @@ import React from 'react';
 import { Card } from '../../components/ui/Card/Card';
 import styles from './ReportSummaryView.module.scss';
 
-interface ReportSummary {
+interface ReportSummaryData {
     matchCount: number;
     highConfidenceCount: number;
     tacticsBreakdown: Record<string, number>;
-    topTechniques: Array<{
-        id: string;
-        name: string;
-        confidenceScore: number;
-    }>;
 }
 
 interface ReportSummaryViewProps {
-    summary: ReportSummary;
+    summary: ReportSummaryData;
 }
 
+const TACTICS_ORDER = [
+    { id: 'reconnaissance', name: 'Reconnaissance' },
+    { id: 'resource-development', name: 'Resource Development' },
+    { id: 'initial-access', name: 'Initial Access' },
+    { id: 'execution', name: 'Execution' },
+    { id: 'persistence', name: 'Persistence' },
+    { id: 'privilege-escalation', name: 'Privilege Escalation' },
+    { id: 'defense-evasion', name: 'Defense Evasion' },
+    { id: 'credential-access', name: 'Credential Access' },
+    { id: 'discovery', name: 'Discovery' },
+    { id: 'lateral-movement', name: 'Lateral Movement' },
+    { id: 'collection', name: 'Collection' },
+    { id: 'command-and-control', name: 'Command and Control' },
+    { id: 'exfiltration', name: 'Exfiltration' },
+    { id: 'impact', name: 'Impact' },
+];
+
+const getTacticNameById = (tacticId: string): string => {
+    const tactic = TACTICS_ORDER.find(t => t.id === tacticId);
+    return tactic ? tactic.name : tacticId;
+};
+
 export const ReportSummaryView: React.FC<ReportSummaryViewProps> = ({ summary }) => {
-    // Get tactics with at least one technique
-    const activeTactics = Object.entries(summary.tacticsBreakdown)
-        .filter(([_, count]) => count > 0)
-        .sort((a, b) => b[1] - a[1]) // Sort by count descending
+    const topTactics = Object.entries(summary.tacticsBreakdown)
+        .sort(([, countA], [, countB]) => countB - countA)
+        .slice(0, 5)
         .map(([tacticId, count]) => ({
             id: tacticId,
+            name: getTacticNameById(tacticId),
             count,
         }));
 
-    // Map tactic IDs to readable names
-    const tacticNames: Record<string, string> = {
-        'reconnaissance': 'Reconnaissance',
-        'resource-development': 'Resource Development',
-        'initial-access': 'Initial Access',
-        'execution': 'Execution',
-        'persistence': 'Persistence',
-        'privilege-escalation': 'Privilege Escalation',
-        'defense-evasion': 'Defense Evasion',
-        'credential-access': 'Credential Access',
-        'discovery': 'Discovery',
-        'lateral-movement': 'Lateral Movement',
-        'collection': 'Collection',
-        'command-and-control': 'Command and Control',
-        'exfiltration': 'Exfiltration',
-        'impact': 'Impact',
-    };
-
     return (
-        <div className={styles.container}>
-            <div className={styles.statisticsSection}>
+        <div className={styles.summaryContainer}>
+            <Card className={styles.summaryCard} elevation={0}>
                 <h2 className={styles.sectionTitle}>Key Statistics</h2>
-                <div className={styles.statisticsContainer}>
-                    <Card className={styles.statCard}>
+                <div className={styles.statsGrid}>
+                    <div className={styles.statItem}>
                         <div className={styles.statValue}>{summary.matchCount}</div>
-                        <div className={styles.statLabel}>Techniques Detected</div>
-                    </Card>
-
-                    <Card className={styles.statCard}>
+                        <div className={styles.statLabel}>Total Techniques Detected</div>
+                    </div>
+                    <div className={styles.statItem}>
                         <div className={styles.statValue}>{summary.highConfidenceCount}</div>
-                        <div className={styles.statLabel}>High Confidence</div>
-                    </Card>
-
-                    <Card className={styles.statCard}>
-                        <div className={styles.statValue}>{activeTactics.length}</div>
-                        <div className={styles.statLabel}>Tactics Covered</div>
-                    </Card>
+                        <div className={styles.statLabel}>High Confidence Detections</div>
+                    </div>
                 </div>
-            </div>
+            </Card>
 
-            <div className={styles.techniquesSection}>
-                <h2 className={styles.sectionTitle}>Top Techniques</h2>
-                <div className={styles.topTechniquesContainer}>
-                    {summary.topTechniques.length > 0 ? (
-                        summary.topTechniques.map(technique => (
-                            <Card key={technique.id} className={styles.techniqueCard}>
-                                <div className={styles.techniqueHeader}>
-                                    <div className={styles.techniqueId}>{technique.id}</div>
-                                    <div className={styles.confidenceScore}>{technique.confidenceScore}%</div>
-                                </div>
-                                <div className={styles.techniqueName}>{technique.name}</div>
-                            </Card>
-                        ))
-                    ) : (
-                        <div className={styles.noTechniquesMessage}>
-                            No techniques were detected in this document
-                        </div>
-                    )}
-                </div>
-            </div>
+            {topTactics.length > 0 && (
+                <Card className={styles.summaryCard} elevation={0}>
+                    <h2 className={styles.sectionTitle}>Top Tactics</h2>
+                    <ul className={styles.tacticsList}>
+                        {topTactics.map(tactic => (
+                            <li key={tactic.id} className={styles.tacticItem}>
+                                <span className={styles.tacticName}>{tactic.name}</span>
+                                <span className={styles.tacticCount}>{tactic.count} technique{tactic.count > 1 ? 's' : ''}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </Card>
+            )}
 
-            <div className={styles.tacticsSection}>
-                <h2 className={styles.sectionTitle}>Tactics Coverage</h2>
-                <div className={styles.tacticsContainer}>
-                    {activeTactics.length > 0 ? (
-                        activeTactics.map(tactic => (
-                            <div key={tactic.id} className={styles.tacticItem}>
-                                <div className={styles.tacticName}>
-                                    {tacticNames[tactic.id] || tactic.id}
-                                </div>
-                                <div className={styles.tacticCount}>{tactic.count}</div>
-                                <div
-                                    className={styles.tacticBar}
-                                    style={{
-                                        width: `${Math.min(100, (tactic.count / activeTactics[0].count) * 100)}%`
-                                    }}
-                                />
-                            </div>
-                        ))
-                    ) : (
-                        <div className={styles.noTacticsMessage}>
-                            No tactics were covered in this document
-                        </div>
-                    )}
-                </div>
-            </div>
+            {/* Add more summary sections as needed, e.g., Key Findings (narrative), Confidence Charts, etc. */}
+            {/* For example:
+      <Card className={styles.summaryCard} elevation={0}>
+        <h2 className={styles.sectionTitle}>Analyst Notes</h2>
+        <p className={styles.notesPlaceholder}>No analyst notes available for this report.</p>
+      </Card>
+      */}
         </div>
     );
 };
+
+// Basic styles for ReportSummaryView.module.scss (conceptual)
+/*
+.summaryContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.summaryCard {
+  padding: 16px;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--color-text-primary);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.statItem {
+  background-color: var(--color-background-secondary);
+  padding: 12px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.tacticsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tacticItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.tacticName {
+  font-weight: 500;
+}
+
+.tacticCount {
+  color: var(--color-text-secondary);
+}
+
+.notesPlaceholder {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+*/
