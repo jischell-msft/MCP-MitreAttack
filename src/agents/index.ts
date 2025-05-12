@@ -15,3 +15,6 @@ export interface Agent {
     getName(): string;
     getVersion(): string;
 }
+
+// Export fetch agent
+export * from './fetch';
