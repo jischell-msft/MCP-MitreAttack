@@ -18,40 +18,27 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build the application
+# VITE_API_BASE_URL is set to /api so frontend requests go to Caddy's /api endpoint
 ENV VITE_API_BASE_URL=/api
 RUN npm run build
 
-# Stage 3: Runtime with Nginx
-FROM nginx:alpine AS runtime
-WORKDIR /usr/share/nginx/html
+# Stage 3: Runtime with simple static server
+FROM node:18-alpine AS runtime
+WORKDIR /app
 
-# Copy nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Remove default nginx static assets
-RUN rm -rf ./*
+# Install 'serve' to serve static files
+RUN npm install -g serve
 
 # Copy static assets from builder stage
-COPY --from=builder /app/dist .
+COPY --from=builder /app/dist ./dist
 
-# Permissions and security
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chmod -R 755 /usr/share/nginx/html && \
-    chown -R nginx:nginx /var/cache/nginx && \
-    chown -R nginx:nginx /var/log/nginx && \
-    chown -R nginx:nginx /etc/nginx/conf.d && \
-    touch /var/run/nginx.pid && \
-    chown -R nginx:nginx /var/run/nginx.pid
-
-# Switch to non-root user
-USER nginx
-
-# Expose port
+# Expose port 80 for the static server (for Caddy to connect to)
 EXPOSE 80
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:80/index.html || exit 1
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start the static server
+# 'serve -s dist' serves the 'dist' folder, '-l 80' listens on port 80
+CMD ["serve", "-s", "dist", "-l", "80"]

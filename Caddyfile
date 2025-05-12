@@ -9,9 +9,19 @@
 
 # Domain configuration
 { $DOMAIN:localhost } {
-    # Reverse proxy for frontend
+    # API proxy to backend
+    handle_path /api/* {
+        reverse_proxy backend:3001 {
+            header_up Host { host }
+            header_up X-Real-IP { remote }
+            header_up X-Forwarded-For { remote }
+            header_up X-Forwarded-Proto { scheme }
+        }
+    }
+
+    # Reverse proxy for frontend (serves static assets and handles SPA routing)
     handle {
-        reverse_proxy frontend:80 {
+        reverse_proxy frontend:80 { # frontend service serves on port 80 internally
             header_up Host { host }
             header_up X-Real-IP { remote }
             header_up X-Forwarded-For { remote }
@@ -28,7 +38,7 @@
         X-Frame-Options "DENY"
         X-XSS-Protection "1; mode=block"
         Referrer-Policy "strict-origin-when-cross-origin"
-        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' {$DOMAIN:localhost}/api;"
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     }
 
