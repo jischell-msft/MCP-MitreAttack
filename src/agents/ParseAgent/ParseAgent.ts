@@ -298,9 +298,20 @@ export class ParseAgent {
 
             // Get external references to find MITRE URL
             const externalRefs = technique.external_references || [];
-            const mitreRef = externalRefs.find((ref: any) =>
-                ref.source_name === 'mitre-attack' || ref.url?.includes('attack.mitre.org')
-            );
+            const mitreRef = externalRefs.find((ref: any) => {
+                if (ref.source_name === 'mitre-attack') return true;
+                if (ref.url) {
+                    try {
+                        const parsedUrl = new URL(ref.url);
+                        const allowedHosts = ['attack.mitre.org'];
+                        return allowedHosts.includes(parsedUrl.host);
+                    } catch (e) {
+                        this.logger.warn(`Invalid URL encountered: ${ref.url}`);
+                        return false;
+                    }
+                }
+                return false;
+            });
 
             // Extract technique ID from external_id if present
             const techniqueId = mitreRef?.external_id || technique.id.split('--').pop();
