@@ -1,0 +1,78 @@
+// Colors - Light Theme
+$color-primary-light: #1a73e8;
+$color-secondary-light: #5f6368;
+$color-background-light: #ffffff;
+$color-surface-light: #f8f9fa;
+$color-text-light: #202124;
+$color-text-secondary-light: #5f6368;
+$color-border-light: #dadce0;
+$color-error-light: #ea4335;
+$color-warning-light: #fbbc04;
+$color-success-light: #34a853;
+$color-info-light: #4285f4;
+
+// Colors - Dark Theme
+$color-primary-dark: #8ab4f8;
+$color-secondary-dark: #9aa0a6;
+$color-background-dark: #202124;
+$color-surface-dark: #303134;
+$color-text-dark: #e8eaed;
+$color-text-secondary-dark: #9aa0a6;
+$color-border-dark: #5f6368;
+$color-error-dark: #f28b82;
+$color-warning-dark: #fdd663;
+$color-success-dark: #81c995;
+$color-info-dark: #8ab4f8;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 48px;
+
+// Border Radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 16px;
+$border-radius-circle: 50%;
+
+// Typography
+$font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-xxl: 24px;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+$line-height-xs: 1.25;
+$line-height-sm: 1.43;
+$line-height-md: 1.5;
+$line-height-lg: 1.56;
+$line-height-xl: 1.6;
+
+// Breakpoints
+$breakpoint-xs: 0;
+$breakpoint-sm: 600px;
+$breakpoint-md: 900px;
+$breakpoint-lg: 1200px;
+$breakpoint-xl: 1536px;
+
+// Shadows
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+// Z-index
+$z-index-appbar: 1100;
+$z-index-drawer: 1200;
+$z-index-modal: 1300;
+$z-index-snackbar: 1400;
+$z-index-tooltip: 1500;

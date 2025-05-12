@@ -1,0 +1,129 @@
+@import 'variables';
+@import 'reset';
+
+:root {
+    // Light theme variables
+    --color-primary: #{$color-primary-light};
+    --color-secondary: #{$color-secondary-light};
+    --color-background: #{$color-background-light};
+    --color-surface: #{$color-surface-light};
+    --color-text: #{$color-text-light};
+    --color-text-secondary: #{$color-text-secondary-light};
+    --color-border: #{$color-border-light};
+    --color-error: #{$color-error-light};
+    --color-warning: #{$color-warning-light};
+    --color-success: #{$color-success-light};
+    --color-info: #{$color-info-light};
+}
+
+[data-theme="dark"] {
+    // Dark theme variables
+    --color-primary: #{$color-primary-dark};
+    --color-secondary: #{$color-secondary-dark};
+    --color-background: #{$color-background-dark};
+    --color-surface: #{$color-surface-dark};
+    --color-text: #{$color-text-dark};
+    --color-text-secondary: #{$color-text-secondary-dark};
+    --color-border: #{$color-border-dark};
+    --color-error: #{$color-error-dark};
+    --color-warning: #{$color-warning-dark};
+    --color-success: #{$color-success-dark};
+    --color-info: #{$color-info-dark};
+}
+
+body {
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--color-text);
+    background-color: var(--color-background);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
+
+    @media (min-width: $breakpoint-md) {
+        padding: 0 $spacing-lg;
+    }
+}
+
+// Typography
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0;
+    margin-bottom: $spacing-md;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 2.25rem;
+}
+
+h2 {
+    font-size: 1.875rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+h4 {
+    font-size: 1.25rem;
+}
+
+h5 {
+    font-size: 1.125rem;
+}
+
+h6 {
+    font-size: 1rem;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: $spacing-md;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+// Scrollbars
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-secondary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+}
