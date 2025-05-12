@@ -48,8 +48,8 @@ export class RtfExtractor {
             rtfString = rtfString.replace(/[\{\}]/g, '');
 
             // Replace escaped characters
-            rtfString = rtfString.replace(/\\\\/g, '\\');
             rtfString = rtfString.replace(/\\'/g, "'");
+            rtfString = rtfString.replace(/\\\\/g, '\\');
 
             return rtfString.trim();
         } catch (error) {
