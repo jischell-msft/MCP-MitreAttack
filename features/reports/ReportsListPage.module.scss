@@ -1,4 +1,7 @@
 .container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
     padding: 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
@@ -10,52 +13,53 @@
         margin-bottom: 1rem;
 
         .title {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 600;
             margin: 0;
         }
     }
 
     .filtersCard {
-        margin-bottom: 1rem;
+        padding: 1rem;
     }
 
     .tableCard {
-        position: relative;
-        min-height: 300px;
+        padding: 1rem;
 
-        .loading,
-        .error {
+        .loading {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 300px;
+            padding: 3rem 0;
+        }
+
+        .error {
+            padding: 1rem 0;
         }
 
         .pagination {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--color-border);
+            padding-top: 1.5rem;
+            gap: 1rem;
 
             .paginationInfo {
-                font-size: 0.875rem;
                 color: var(--color-text-secondary);
+                font-size: 0.875rem;
             }
         }
     }
 }
 
-// Table cell styles
+// Table cell styling
 .sourceCell {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
 
     .urlIcon,
     .fileIcon {
-        margin-right: 0.5rem;
         font-size: 1rem;
     }
 
@@ -63,38 +67,54 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 500px;
+        max-width: 400px;
     }
 }
 
 .matchCountCell {
+    display: flex;
+    flex-direction: column;
+
     .matchCount {
-        font-weight: 600;
-        margin-right: 0.5rem;
+        font-weight: 500;
     }
 
     .highConfidenceCount {
-        font-size: 0.875rem;
+        font-size: 0.75rem;
         color: var(--color-text-secondary);
     }
 }
 
 .topTechniquesCell {
     display: flex;
-    flex-wrap: wrap;
     gap: 0.25rem;
+    flex-wrap: wrap;
 
     .techniqueBadge {
-        background-color: var(--color-background-alt);
+        background-color: var(--color-background-secondary);
         color: var(--color-text);
-        border-radius: 4px;
-        padding: 0.125rem 0.375rem;
         font-size: 0.75rem;
+        padding: 0.1875rem 0.375rem;
+        border-radius: 4px;
         font-family: monospace;
     }
 }
 
 .actionsCell {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .sourceText {
+        max-width: 200px;
+    }
+
+    .pagination {
+        padding-top: 1rem;
+    }
 }

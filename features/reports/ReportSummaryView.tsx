@@ -5,17 +5,17 @@ import styles from './ReportSummaryView.module.scss';
 interface ReportSummary {
     matchCount: number;
     highConfidenceCount: number;
-    confidenceDistribution: {
-        high: number;
-        medium: number;
-        low: number;
-    };
     tacticsBreakdown: Record<string, number>;
-    topTechniques: {
+    topTechniques: Array<{
         id: string;
         name: string;
-        confidence: number;
-    }[];
+        confidenceScore: number;
+    }>;
+    riskAssessment?: {
+        overallRisk: 'low' | 'medium' | 'high' | 'critical';
+        riskScore: number;
+        riskFactors: string[];
+    };
 }
 
 interface ReportSummaryViewProps {
@@ -23,152 +23,129 @@ interface ReportSummaryViewProps {
 }
 
 export const ReportSummaryView: React.FC<ReportSummaryViewProps> = ({ summary }) => {
-    // Calculate percentages for confidence distribution
-    const totalMatches = summary.matchCount || 1;
-    const highPercent = (summary.confidenceDistribution?.high / totalMatches) * 100;
-    const mediumPercent = (summary.confidenceDistribution?.medium / totalMatches) * 100;
-    const lowPercent = (summary.confidenceDistribution?.low / totalMatches) * 100;
-
-    // Get tactics with the most techniques
-    const topTactics = Object.entries(summary.tacticsBreakdown || {})
+    // Calculate the tactics with the most techniques
+    const topTactics = Object.entries(summary.tacticsBreakdown)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 3)
-        .map(([tacticId, count]) => {
-            // Map the tactic ID to a human-readable name
-            const tacticName = getTacticName(tacticId);
-            return { id: tacticId, name: tacticName, count };
-        });
+        .map(([id, count]) => ({ id, count }));
 
-    // Helper function to convert tactic ID to readable name
-    function getTacticName(tacticId: string): string {
-        const tacticMap: Record<string, string> = {
-            'reconnaissance': 'Reconnaissance',
-            'resource-development': 'Resource Development',
-            'initial-access': 'Initial Access',
-            'execution': 'Execution',
-            'persistence': 'Persistence',
-            'privilege-escalation': 'Privilege Escalation',
-            'defense-evasion': 'Defense Evasion',
-            'credential-access': 'Credential Access',
-            'discovery': 'Discovery',
-            'lateral-movement': 'Lateral Movement',
-            'collection': 'Collection',
-            'command-and-control': 'Command and Control',
-            'exfiltration': 'Exfiltration',
-            'impact': 'Impact'
-        };
+    // Map tactic IDs to readable names
+    const tacticNames: Record<string, string> = {
+        'reconnaissance': 'Reconnaissance',
+        'resource-development': 'Resource Development',
+        'initial-access': 'Initial Access',
+        'execution': 'Execution',
+        'persistence': 'Persistence',
+        'privilege-escalation': 'Privilege Escalation',
+        'defense-evasion': 'Defense Evasion',
+        'credential-access': 'Credential Access',
+        'discovery': 'Discovery',
+        'lateral-movement': 'Lateral Movement',
+        'collection': 'Collection',
+        'command-and-control': 'Command and Control',
+        'exfiltration': 'Exfiltration',
+        'impact': 'Impact',
+    };
 
-        return tacticMap[tacticId] || tacticId;
-    }
+    // Get risk level color
+    const getRiskColor = (risk?: 'low' | 'medium' | 'high' | 'critical') => {
+        switch (risk) {
+            case 'critical': return '#d32f2f'; // dark red
+            case 'high': return '#f44336'; // red
+            case 'medium': return '#ff9800'; // orange
+            case 'low': return '#4caf50'; // green
+            default: return '#9e9e9e'; // grey
+        }
+    };
 
     return (
         <div className={styles.container}>
-            <div className={styles.statsGrid}>
-                <Card className={styles.statsCard}>
-                    <div className={styles.statsTitle}>Total Technique Matches</div>
-                    <div className={styles.statsValue}>{summary.matchCount}</div>
-                    <div className={styles.statsMeta}>
-                        <span className={styles.highConfidence}>
-                            {summary.highConfidenceCount} high confidence
-                        </span>
+            <div className={styles.statsRow}>
+                <Card className={styles.statCard}>
+                    <div className={styles.statTitle}>Total Techniques</div>
+                    <div className={styles.statValue}>{summary.matchCount}</div>
+                </Card>
+
+                <Card className={styles.statCard}>
+                    <div className={styles.statTitle}>High Confidence</div>
+                    <div className={styles.statValue}>{summary.highConfidenceCount}</div>
+                    <div className={styles.statSubtext}>
+                        ({Math.round((summary.highConfidenceCount / summary.matchCount) * 100) || 0}%)
                     </div>
                 </Card>
 
-                <Card className={styles.statsCard}>
-                    <div className={styles.statsTitle}>Confidence Distribution</div>
-                    <div className={styles.confidenceChart}>
-                        <div className={styles.confidenceBars}>
-                            <div
-                                className={styles.highBar}
-                                style={{ width: `${highPercent}%` }}
-                                title={`High confidence: ${summary.confidenceDistribution?.high} matches (${highPercent.toFixed(1)}%)`}
-                            />
-                            <div
-                                className={styles.mediumBar}
-                                style={{ width: `${mediumPercent}%` }}
-                                title={`Medium confidence: ${summary.confidenceDistribution?.medium} matches (${mediumPercent.toFixed(1)}%)`}
-                            />
-                            <div
-                                className={styles.lowBar}
-                                style={{ width: `${lowPercent}%` }}
-                                title={`Low confidence: ${summary.confidenceDistribution?.low} matches (${lowPercent.toFixed(1)}%)`}
-                            />
-                        </div>
-                        <div className={styles.confidenceLegend}>
-                            <div className={styles.legendItem}>
-                                <div className={styles.highSwatch} />
-                                <span>High</span>
-                            </div>
-                            <div className={styles.legendItem}>
-                                <div className={styles.mediumSwatch} />
-                                <span>Medium</span>
-                            </div>
-                            <div className={styles.legendItem}>
-                                <div className={styles.lowSwatch} />
-                                <span>Low</span>
-                            </div>
-                        </div>
+                <Card className={styles.statCard}>
+                    <div className={styles.statTitle}>Tactics Covered</div>
+                    <div className={styles.statValue}>
+                        {Object.values(summary.tacticsBreakdown).filter(count => count > 0).length}
                     </div>
+                    <div className={styles.statSubtext}>of 14 total</div>
                 </Card>
 
-                <Card className={styles.statsCard}>
-                    <div className={styles.statsTitle}>Top Tactics</div>
-                    <div className={styles.tacticsList}>
-                        {topTactics.length > 0 ? (
-                            topTactics.map(tactic => (
-                                <div key={tactic.id} className={styles.tacticItem}>
-                                    <div className={styles.tacticName}>{tactic.name}</div>
-                                    <div className={styles.tacticCount}>{tactic.count} techniques</div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className={styles.noData}>No tactics detected</div>
-                        )}
-                    </div>
-                </Card>
+                {summary.riskAssessment && (
+                    <Card
+                        className={`${styles.statCard} ${styles.riskCard}`}
+                        style={{ borderTopColor: getRiskColor(summary.riskAssessment.overallRisk) }}
+                    >
+                        <div className={styles.statTitle}>Overall Risk</div>
+                        <div
+                            className={styles.riskValue}
+                            style={{ color: getRiskColor(summary.riskAssessment.overallRisk) }}
+                        >
+                            {summary.riskAssessment.overallRisk.toUpperCase()}
+                        </div>
+                        <div className={styles.statSubtext}>
+                            Score: {summary.riskAssessment.riskScore}/100
+                        </div>
+                    </Card>
+                )}
             </div>
 
-            <Card className={styles.techniqueCard}>
-                <div className={styles.cardTitle}>Top Techniques by Confidence</div>
+            <div className={styles.keyFindingsCard}>
+                <Card>
+                    <h3 className={styles.sectionTitle}>Key Findings</h3>
 
-                <div className={styles.techniqueList}>
-                    {summary.topTechniques && summary.topTechniques.length > 0 ? (
-                        summary.topTechniques.map(technique => (
-                            <div key={technique.id} className={styles.techniqueItem}>
-                                <div className={styles.techniqueHeader}>
-                                    <div className={styles.techniqueId}>
-                                        <a
-                                            href={`https://attack.mitre.org/techniques/${technique.id}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            {technique.id}
-                                        </a>
-                                    </div>
-                                    <div
-                                        className={styles.techniqueConfidence}
-                                        style={{
-                                            backgroundColor: getConfidenceColor(technique.confidence)
-                                        }}
-                                    >
-                                        {technique.confidence}%
-                                    </div>
-                                </div>
-                                <div className={styles.techniqueName}>{technique.name}</div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className={styles.noData}>No techniques detected</div>
+                    <div className={styles.findingsSection}>
+                        <h4 className={styles.findingSectionTitle}>Top Techniques</h4>
+                        <ul className={styles.techniquesList}>
+                            {summary.topTechniques.map((technique) => (
+                                <li key={technique.id} className={styles.techniqueListing}>
+                                    <span className={styles.techniqueId}>{technique.id}</span>
+                                    <span className={styles.techniqueName}>{technique.name}</span>
+                                    <span className={styles.techniqueConfidence}>
+                                        {technique.confidenceScore}% Confidence
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className={styles.findingsSection}>
+                        <h4 className={styles.findingSectionTitle}>Most Common Tactics</h4>
+                        <ul className={styles.tacticsList}>
+                            {topTactics.map((tactic) => (
+                                <li key={tactic.id} className={styles.tacticListing}>
+                                    <span className={styles.tacticName}>{tacticNames[tactic.id] || tactic.id}</span>
+                                    <span className={styles.tacticCount}>{tactic.count} techniques</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {summary.riskAssessment && summary.riskAssessment.riskFactors.length > 0 && (
+                        <div className={styles.findingsSection}>
+                            <h4 className={styles.findingSectionTitle}>Risk Factors</h4>
+                            <ul className={styles.riskFactorsList}>
+                                {summary.riskAssessment.riskFactors.map((factor, index) => (
+                                    <li key={index} className={styles.riskFactorListing}>
+                                        {factor}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     )}
-                </div>
-            </Card>
+                </Card>
+            </div>
         </div>
     );
 };
-
-// Helper function to get color based on confidence score
-function getConfidenceColor(score: number): string {
-    if (score >= 85) return '#34a853'; // High confidence (green)
-    if (score >= 60) return '#fbbc04'; // Medium confidence (yellow)
-    return '#ea4335'; // Low confidence (red)
-}
