@@ -148,7 +148,17 @@ router.post('/', upload.single('document'), async (req, res, next) => {
         // Clean up file on error
         if (req.file?.path) {
             try {
-                await fs.promises.unlink(req.file.path);
+                const uploadDir = path.join(process.cwd(), 'uploads');
+                const normalizedPath = path.resolve(req.file.path);
+                if (normalizedPath.startsWith(uploadDir)) {
+                    await fs.promises.unlink(normalizedPath);
+                } else {
+                    logger.error('Attempted to delete a file outside the upload directory', {
+                        path: req.file.path,
+                        normalizedPath,
+                        uploadDir
+                    });
+                }
             } catch (unlinkError) {
                 logger.error('Failed to delete uploaded file after error', {
                     path: req.file.path,
