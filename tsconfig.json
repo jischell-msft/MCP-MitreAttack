@@ -1,0 +1,52 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "outDir": "dist",
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "src/*"
+            ],
+            "@agents/*": [
+                "src/agents/*"
+            ],
+            "@api/*": [
+                "src/api/*"
+            ],
+            "@db/*": [
+                "src/db/*"
+            ],
+            "@models/*": [
+                "src/models/*"
+            ],
+            "@utils/*": [
+                "src/utils/*"
+            ],
+            "@config/*": [
+                "src/config/*"
+            ]
+        },
+        "declaration": true,
+        "resolveJsonModule": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

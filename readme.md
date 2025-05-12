@@ -1,3 +1,22 @@
+# MCP MITRE ATT&CK Integration
+
+Multi-agent Coordination Platform (MCP) server that evaluates documents against the MITRE ATT&CK framework using Azure OpenAI for analysis.
+
+## Overview
+
+This project provides a platform for analyzing documents and URLs against the MITRE ATT&CK framework to identify potential security threats and techniques. It uses a multi-agent architecture with Azure OpenAI integration for advanced analysis.
+
+## Features
+
+- Document and URL submission for MITRE ATT&CK analysis
+- Multiple output formats for analysis reports (JSON, HTML, CSV)
+- RESTful API for integration with other systems
+- Dashboard for viewing and managing analysis reports
+- Local caching of MITRE ATT&CK data
+
+## Project Structure
+
+````markdown
 # MCP Server MITRE Integration
 
 A multi-agent system that fetches, processes, and evaluates documents against the MITRE ATT&CK framework using Azure OpenAI for analysis.
@@ -69,3 +88,4 @@ The system consists of five specialized agents:
 ## License
 
 MIT
+````
