@@ -18,3 +18,6 @@ export interface Agent {
 
 // Export fetch agent
 export * from './fetch';
+
+// Export parse agent
+export * from './parse';
