@@ -20,6 +20,9 @@ export const SERVER_CONFIG = {
 // Database configuration
 export const DB_CONFIG = {
     path: process.env.DATABASE_PATH || path.join(process.cwd(), 'db', 'mcp.sqlite3'),
+    debug: process.env.NODE_ENV === 'development',
+    migrationDir: path.join(process.cwd(), 'src', 'db', 'migrations'),
+    schemaPath: path.join(process.cwd(), 'src', 'db', 'schema.sql'),
 };
 
 // MITRE ATT&CK configuration

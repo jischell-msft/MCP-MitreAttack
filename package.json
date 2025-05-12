@@ -11,7 +11,11 @@
         "test": "jest",
         "lint": "eslint . --ext .ts",
         "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "db:init": "ts-node scripts/migrate.ts init",
+        "db:migrate": "ts-node scripts/migrate.ts up",
+        "db:rollback": "ts-node scripts/migrate.ts down",
+        "db:status": "ts-node scripts/migrate.ts status"
     },
     "keywords": [
         "mitre",
