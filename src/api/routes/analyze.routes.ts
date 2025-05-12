@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+import rateLimit from 'express-rate-limit';
 import { startWorkflowAsync, getWorkflowStatus, isValidUuid } from '../../workflow/workflow.service';
 import { logger } from '../../utils/logger';
 
@@ -14,6 +15,19 @@ const upload = multer({
     dest: path.join(process.cwd(), 'uploads'),
     limits: {
         fileSize: 50 * 1024 * 1024, // 50MB
+    }
+});
+
+// Configure rate limiter for document upload
+const uploadRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: {
+        success: false,
+        error: {
+            code: 'RATE_LIMIT_EXCEEDED',
+            message: 'Too many requests, please try again later.'
+        }
     }
 });
 
@@ -74,7 +88,7 @@ router.post('/', async (req, res, next) => {
 });
 
 // Document upload endpoint (reuses the same path as URL submission)
-router.post('/', upload.single('document'), async (req, res, next) => {
+router.post('/', uploadRateLimiter, upload.single('document'), async (req, res, next) => {
     try {
         // Check if request has a file
         if (!req.file) {
