@@ -1,0 +1,122 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+
+            .breadcrumbLink {
+                color: var(--color-primary);
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            .breadcrumbSeparator {
+                color: var(--color-text-secondary);
+            }
+
+            .breadcrumbCurrent {
+                color: var(--color-text-secondary);
+            }
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+
+            .deleteButton {
+                color: var(--color-error);
+                border-color: var(--color-error);
+
+                &:hover {
+                    background-color: var(--color-error-light);
+                }
+            }
+        }
+    }
+
+    .reportHeader {
+        padding: 1.5rem;
+
+        .sourceInfo {
+            .title {
+                margin: 0 0 1rem;
+                font-size: 1.5rem;
+                font-weight: 600;
+
+                .urlSource,
+                .fileSource {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+
+                    .urlIcon,
+                    .fileIcon {
+                        font-size: 1.25rem;
+                    }
+                }
+            }
+
+            .metadata {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1.5rem;
+
+                .metadataItem {
+                    display: flex;
+                    flex-direction: column;
+
+                    .metadataLabel {
+                        font-size: 0.75rem;
+                        color: var(--color-text-secondary);
+                        margin-bottom: 0.25rem;
+                    }
+
+                    .metadataValue {
+                        font-weight: 500;
+
+                        .highConfidenceText {
+                            margin-left: 0.5rem;
+                            color: var(--color-text-secondary);
+                            font-weight: normal;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .contentCard {
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .loadingContainer,
+    .errorContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem;
+
+        .errorActions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+    }
+}

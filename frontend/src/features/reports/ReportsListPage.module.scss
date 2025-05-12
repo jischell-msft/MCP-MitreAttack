@@ -1,0 +1,102 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        .title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+    }
+
+    .filtersCard {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .tableCard {
+        padding: 0;
+        overflow: hidden;
+
+        .loading,
+        .error {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-top: 1px solid var(--color-border);
+
+            .paginationInfo {
+                color: var(--color-text-secondary);
+                font-size: 0.875rem;
+            }
+        }
+    }
+
+    // Table cell styles
+    .sourceCell {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        .urlIcon,
+        .fileIcon {
+            font-size: 1rem;
+        }
+
+        .sourceText {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 300px;
+        }
+    }
+
+    .matchCountCell {
+        .matchCount {
+            font-weight: 500;
+            margin-right: 0.25rem;
+        }
+
+        .highConfidenceCount {
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+        }
+    }
+
+    .topTechniquesCell {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+
+        .techniqueBadge {
+            background-color: var(--color-background-accent);
+            border-radius: 4px;
+            padding: 0.125rem 0.375rem;
+            font-size: 0.75rem;
+            font-family: monospace;
+        }
+    }
+
+    .actionsCell {
+        text-align: right;
+    }
+}
