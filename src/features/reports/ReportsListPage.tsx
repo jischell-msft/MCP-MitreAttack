@@ -5,8 +5,6 @@ import { Card } from '../../components/ui/Card/Card';
 import { Table, TableColumn } from '../../components/ui/Table/Table';
 import { Pagination } from '../../components/ui/Pagination/Pagination';
 import { Button } from '../../components/ui/Button/Button';
-import { Input } from '../../components/ui/Input/Input';
-import { Select } from '../../components/ui/Select/Select';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState/EmptyState';
 import { ReportFilters } from './ReportFilters';
