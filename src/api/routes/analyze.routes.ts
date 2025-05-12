@@ -91,7 +91,13 @@ router.post('/', upload.single('document'), async (req, res, next) => {
         const validationResult = validateUploadedFile(req.file);
         if (!validationResult.valid) {
             // Remove invalid file
-            await fs.promises.unlink(req.file.path);
+            const uploadDir = path.join(process.cwd(), 'uploads');
+            const resolvedPath = path.resolve(req.file.path);
+            if (!resolvedPath.startsWith(uploadDir)) {
+                logger.error('Attempted to delete a file outside the upload directory', { path: req.file.path });
+            } else {
+                await fs.promises.unlink(resolvedPath);
+            }
 
             return res.status(400).json({
                 success: false,
@@ -137,7 +143,13 @@ router.post('/', upload.single('document'), async (req, res, next) => {
         // Clean up file on error
         if (req.file?.path) {
             try {
-                await fs.promises.unlink(req.file.path);
+                const uploadDir = path.join(process.cwd(), 'uploads');
+                const resolvedPath = path.resolve(req.file.path);
+                if (!resolvedPath.startsWith(uploadDir)) {
+                    logger.error('Attempted to delete a file outside the upload directory', { path: req.file.path });
+                } else {
+                    await fs.promises.unlink(resolvedPath);
+                }
             } catch (unlinkError) {
                 logger.error('Failed to delete uploaded file after error', {
                     path: req.file.path,
