@@ -40,7 +40,7 @@ async function setupDatabase() {
 
         console.log('Database setup complete!');
     } catch (error) {
-        console.error('Error setting up database:', error);
+        console.error('Database setup failed:', error);
         process.exit(1);
     }
 }
