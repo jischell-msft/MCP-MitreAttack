@@ -1,3 +1,5 @@
+import winston from 'winston';
+import { Request } from 'express'; // Type import for requestLogger
 import { SERVER_CONFIG } from '../config';
 
 /**
@@ -91,3 +93,38 @@ class Logger {
 
 // Create and export a singleton instance
 export const logger = new Logger(SERVER_CONFIG.logLevel as LogLevel);
+
+// Winston logger configuration
+const transportConsole = new winston.transports.Console({
+    format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.timestamp(),
+        winston.format.printf(({ timestamp, level, message }) => {
+            return `[${timestamp}] [${level}] ${message}`;
+        })
+    )
+});
+
+const transportFile = new winston.transports.File({
+    filename: 'app.log',
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+    )
+});
+
+const loggerWinston = winston.createLogger({
+    level: SERVER_CONFIG.logLevel,
+    transports: [
+        transportConsole,
+        transportFile
+    ]
+});
+
+export { loggerWinston };
+
+// Request logger middleware for Express
+export function requestLogger(req: Request, res: any, next: () => void) {
+    loggerWinston.info(`HTTP ${req.method} ${req.url}`);
+    next();
+}

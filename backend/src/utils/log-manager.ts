@@ -1,0 +1,13 @@
+// The content of this file (originally from utils/log-manager.ts) remains unchanged.
+// It should be moved to this new path.
+//
+// Original content structure:
+// import winston from 'winston';
+// import 'winston-daily-rotate-file';
+// import fs from 'fs';
+// import path from 'path';
+//
+// // ... log directory creation ...
+// // ... log format definition ...
+// // ... transport definitions (DailyRotateFile, Console) ...
+// // ... logger creation and export ...
