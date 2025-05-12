@@ -1,18 +1,17 @@
 /**
- * Base application error class
+ * Custom application error class
  */
 export class ApplicationError extends Error {
-    constructor(
-        public code: string,
-        message: string,
-        public cause?: Error
-    ) {
+    code: string;
+
+    constructor(message: string, code: string) {
         super(message);
         this.name = 'ApplicationError';
+        this.code = code;
 
-        // Preserve stack trace
+        // Ensures proper stack trace in V8 environments
         if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, this.constructor);
+            Error.captureStackTrace(this, ApplicationError);
         }
     }
 }
@@ -22,7 +21,7 @@ export class ApplicationError extends Error {
  */
 export class TransientError extends ApplicationError {
     constructor(code: string, message: string, cause?: Error) {
-        super(code, message, cause);
+        super(message, code);
         this.name = 'TransientError';
     }
 }
@@ -32,7 +31,7 @@ export class TransientError extends ApplicationError {
  */
 export class PermanentError extends ApplicationError {
     constructor(code: string, message: string, cause?: Error) {
-        super(code, message, cause);
+        super(message, code);
         this.name = 'PermanentError';
     }
 }
@@ -42,7 +41,7 @@ export class PermanentError extends ApplicationError {
  */
 export class ValidationError extends ApplicationError {
     constructor(code: string, message: string, public details?: any) {
-        super(code, message);
+        super(message, code);
         this.name = 'ValidationError';
     }
 }
@@ -52,7 +51,7 @@ export class ValidationError extends ApplicationError {
  */
 export class AuthenticationError extends ApplicationError {
     constructor(message: string, cause?: Error) {
-        super('AUTHENTICATION_FAILED', message, cause);
+        super(message, 'AUTHENTICATION_FAILED');
         this.name = 'AuthenticationError';
     }
 }
@@ -62,7 +61,7 @@ export class AuthenticationError extends ApplicationError {
  */
 export class AuthorizationError extends ApplicationError {
     constructor(message: string, cause?: Error) {
-        super('AUTHORIZATION_FAILED', message, cause);
+        super(message, 'AUTHORIZATION_FAILED');
         this.name = 'AuthorizationError';
     }
 }
@@ -72,7 +71,7 @@ export class AuthorizationError extends ApplicationError {
  */
 export class NotFoundError extends ApplicationError {
     constructor(resource: string, id: string, cause?: Error) {
-        super('RESOURCE_NOT_FOUND', `${resource} with id ${id} not found`, cause);
+        super(`${resource} with id ${id} not found`, 'RESOURCE_NOT_FOUND');
         this.name = 'NotFoundError';
     }
 }
