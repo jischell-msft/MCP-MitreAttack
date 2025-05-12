@@ -75,9 +75,8 @@ export const RecentSubmissions: React.FC = () => {
     };
 
     const handleResubmit = (submission: Submission) => {
-        // Implementation would connect back to the parent component
-        // This would typically dispatch an event or use a callback
-        console.log('Resubmit requested for:', submission);
+        // Implement resubmission logic
+        // This would typically call back to the parent component
     };
 
     if (submissions.length === 0) {

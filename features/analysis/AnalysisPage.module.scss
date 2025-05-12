@@ -1,30 +1,29 @@
 .container {
-    padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 2rem 1rem;
 }
 
 .title {
     margin-bottom: 2rem;
     font-size: 2rem;
     font-weight: 600;
-    color: var(--color-text-primary);
 }
 
 .content {
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: 2rem;
+    gap: 2rem;
 
-    @media (min-width: 992px) {
-        grid-template-columns: 2fr 1fr;
+    @media (min-width: 1024px) {
+        grid-template-columns: 3fr 2fr;
     }
 }
 
 .formContainer {
-    width: 100%;
+    // Styling for the form container
 }
 
 .recentContainer {
-    width: 100%;
+    // Styling for the recent submissions section
 }

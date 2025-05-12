@@ -1,0 +1,25 @@
+.optionsCard {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #fafafa;
+}
+
+.optionsTitle {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.optionsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+
+    @media (min-width: 768px) {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.optionItem {
+    // Style for each option item
+}

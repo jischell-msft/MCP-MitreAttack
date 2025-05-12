@@ -127,11 +127,8 @@ export const AnalysisPage: React.FC = () => {
     };
 
     const addToRecentSubmissions = (submission: any) => {
-        // Get the recent submissions component to handle this
-        const recentSubmissionsElement = document.querySelector('recent-submissions-component');
-        if (recentSubmissionsElement && typeof (recentSubmissionsElement as any).addSubmission === 'function') {
-            (recentSubmissionsElement as any).addSubmission(submission);
-        }
+        // Implementation for adding to recent submissions
+        // This functionality is implemented in the RecentSubmissions component
     };
 
     return (
