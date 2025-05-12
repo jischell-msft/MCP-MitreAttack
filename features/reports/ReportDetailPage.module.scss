@@ -1,0 +1,120 @@
+.container {
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+
+            .breadcrumbLink {
+                color: var(--color-primary);
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            .breadcrumbSeparator {
+                margin: 0 0.5rem;
+                color: var(--color-text-secondary);
+            }
+
+            .breadcrumbCurrent {
+                color: var(--color-text);
+                font-weight: 500;
+            }
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+
+            .deleteButton {
+                color: var(--color-danger);
+                border-color: var(--color-danger);
+
+                &:hover {
+                    background-color: var(--color-danger-subtle);
+                }
+            }
+        }
+    }
+
+    .reportHeader {
+        margin-bottom: 1rem;
+        padding: 1.5rem;
+
+        .sourceInfo {
+            .title {
+                margin: 0 0 1rem 0;
+                font-size: 1.5rem;
+                font-weight: 600;
+
+                .urlSource,
+                .fileSource {
+                    display: flex;
+                    align-items: center;
+
+                    .urlIcon,
+                    .fileIcon {
+                        margin-right: 0.5rem;
+                        font-size: 1.25rem;
+                    }
+                }
+            }
+
+            .metadata {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1.5rem;
+
+                .metadataItem {
+                    .metadataLabel {
+                        display: block;
+                        font-size: 0.75rem;
+                        text-transform: uppercase;
+                        color: var(--color-text-secondary);
+                        margin-bottom: 0.25rem;
+                    }
+
+                    .metadataValue {
+                        font-weight: 500;
+
+                        .highConfidenceText {
+                            margin-left: 0.5rem;
+                            font-weight: normal;
+                            color: var(--color-success);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .contentCard {
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .loadingContainer,
+    .errorContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 300px;
+
+        .errorActions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+    }
+}

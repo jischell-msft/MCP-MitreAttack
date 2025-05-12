@@ -1,0 +1,100 @@
+.container {
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        .title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+    }
+
+    .filtersCard {
+        margin-bottom: 1rem;
+    }
+
+    .tableCard {
+        position: relative;
+        min-height: 300px;
+
+        .loading,
+        .error {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-border);
+
+            .paginationInfo {
+                font-size: 0.875rem;
+                color: var(--color-text-secondary);
+            }
+        }
+    }
+}
+
+// Table cell styles
+.sourceCell {
+    display: flex;
+    align-items: center;
+
+    .urlIcon,
+    .fileIcon {
+        margin-right: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .sourceText {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 500px;
+    }
+}
+
+.matchCountCell {
+    .matchCount {
+        font-weight: 600;
+        margin-right: 0.5rem;
+    }
+
+    .highConfidenceCount {
+        font-size: 0.875rem;
+        color: var(--color-text-secondary);
+    }
+}
+
+.topTechniquesCell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+
+    .techniqueBadge {
+        background-color: var(--color-background-alt);
+        color: var(--color-text);
+        border-radius: 4px;
+        padding: 0.125rem 0.375rem;
+        font-size: 0.75rem;
+        font-family: monospace;
+    }
+}
+
+.actionsCell {
+    display: flex;
+    justify-content: flex-end;
+}
