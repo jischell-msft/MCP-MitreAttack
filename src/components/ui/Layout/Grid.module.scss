@@ -1,0 +1,192 @@
+@import '../../../styles/variables';
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+
+    &.nowrap {
+        flex-wrap: nowrap;
+    }
+
+    &.direction-column {
+        flex-direction: column;
+    }
+
+    &.align-start {
+        align-items: flex-start;
+    }
+
+    &.align-center {
+        align-items: center;
+    }
+
+    &.align-end {
+        align-items: flex-end;
+    }
+
+    &.align-stretch {
+        align-items: stretch;
+    }
+
+    &.justify-start {
+        justify-content: flex-start;
+    }
+
+    &.justify-center {
+        justify-content: center;
+    }
+
+    &.justify-end {
+        justify-content: flex-end;
+    }
+
+    &.justify-space-between {
+        justify-content: space-between;
+    }
+
+    &.justify-space-around {
+        justify-content: space-around;
+    }
+
+    &.justify-space-evenly {
+        justify-content: space-evenly;
+    }
+
+    // Spacing
+    &.spacing-xs {
+        margin: -#{$spacing-xs};
+        width: calc(100% + #{$spacing-xs * 2});
+
+        &>.item {
+            padding: #{$spacing-xs};
+        }
+    }
+
+    &.spacing-sm {
+        margin: -#{$spacing-sm};
+        width: calc(100% + #{$spacing-sm * 2});
+
+        &>.item {
+            padding: #{$spacing-sm};
+        }
+    }
+
+    &.spacing-md {
+        margin: -#{$spacing-md};
+        width: calc(100% + #{$spacing-md * 2});
+
+        &>.item {
+            padding: #{$spacing-md};
+        }
+    }
+
+    &.spacing-lg {
+        margin: -#{$spacing-lg};
+        width: calc(100% + #{$spacing-lg * 2});
+
+        &>.item {
+            padding: #{$spacing-lg};
+        }
+    }
+
+    &.spacing-xl {
+        margin: -#{$spacing-xl};
+        width: calc(100% + #{$spacing-xl * 2});
+
+        &>.item {
+            padding: #{$spacing-xl};
+        }
+    }
+}
+
+.item {
+    box-sizing: border-box;
+}
+
+// XS breakpoint (0px and up)
+.xs-auto {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+
+@for $i from 1 through 12 {
+    .xs-#{$i} {
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: calc(100% / 12 * #{$i});
+        max-width: calc(100% / 12 * #{$i});
+    }
+}
+
+// SM breakpoint (600px and up)
+@media (min-width: #{$breakpoint-sm}) {
+    .sm-auto {
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: auto;
+    }
+
+    @for $i from 1 through 12 {
+        .sm-#{$i} {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: calc(100% / 12 * #{$i});
+            max-width: calc(100% / 12 * #{$i});
+        }
+    }
+}
+
+// MD breakpoint (900px and up)
+@media (min-width: #{$breakpoint-md}) {
+    .md-auto {
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: auto;
+    }
+
+    @for $i from 1 through 12 {
+        .md-#{$i} {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: calc(100% / 12 * #{$i});
+            max-width: calc(100% / 12 * #{$i});
+        }
+    }
+}
+
+// LG breakpoint (1200px and up)
+@media (min-width: #{$breakpoint-lg}) {
+    .lg-auto {
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: auto;
+    }
+
+    @for $i from 1 through 12 {
+        .lg-#{$i} {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: calc(100% / 12 * #{$i});
+            max-width: calc(100% / 12 * #{$i});
+        }
+    }
+}
+
+// XL breakpoint (1536px and up)
+@media (min-width: #{$breakpoint-xl}) {
+    .xl-auto {
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: auto;
+    }
+
+    @for $i from 1 through 12 {
+        .xl-#{$i} {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: calc(100% / 12 * #{$i});
+            max-width: calc(100% / 12 * #{$i});
+        }
+    }
+}

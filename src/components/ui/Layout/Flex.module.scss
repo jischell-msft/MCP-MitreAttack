@@ -1,0 +1,98 @@
+@import '../../../styles/variables';
+
+.flex {
+    display: flex;
+
+    // Direction
+    &.direction-row {
+        flex-direction: row;
+    }
+
+    &.direction-column {
+        flex-direction: column;
+    }
+
+    &.direction-row-reverse {
+        flex-direction: row-reverse;
+    }
+
+    &.direction-column-reverse {
+        flex-direction: column-reverse;
+    }
+
+    // Alignment
+    &.align-start {
+        align-items: flex-start;
+    }
+
+    &.align-center {
+        align-items: center;
+    }
+
+    &.align-end {
+        align-items: flex-end;
+    }
+
+    &.align-stretch {
+        align-items: stretch;
+    }
+
+    &.align-baseline {
+        align-items: baseline;
+    }
+
+    // Justify
+    &.justify-start {
+        justify-content: flex-start;
+    }
+
+    &.justify-center {
+        justify-content: center;
+    }
+
+    &.justify-end {
+        justify-content: flex-end;
+    }
+
+    &.justify-space-between {
+        justify-content: space-between;
+    }
+
+    &.justify-space-around {
+        justify-content: space-around;
+    }
+
+    &.justify-space-evenly {
+        justify-content: space-evenly;
+    }
+
+    // Wrap
+    &.wrap-wrap {
+        flex-wrap: wrap;
+    }
+
+    &.wrap-wrap-reverse {
+        flex-wrap: wrap-reverse;
+    }
+
+    // Gap
+    &.gap-xs {
+        gap: $spacing-xs;
+    }
+
+    &.gap-sm {
+        gap: $spacing-sm;
+    }
+
+    &.gap-md {
+        gap: $spacing-md;
+    }
+
+    &.gap-lg {
+        gap: $spacing-lg;
+    }
+
+    &.gap-xl {
+        gap: $spacing-xl;
+    }
+}

@@ -1,0 +1,99 @@
+@import '../../../styles/variables';
+
+.container {
+    width: 100%;
+    position: relative;
+    overflow-x: auto;
+
+    &.loading {
+        min-height: 200px;
+    }
+}
+
+.loadingOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    font-weight: $font-weight-medium;
+    color: $color-text-secondary;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.header {
+    border-bottom: 2px solid $color-border;
+    background-color: $color-surface;
+
+    th {
+        padding: 12px 16px;
+        font-weight: $font-weight-medium;
+        color: $color-text;
+    }
+}
+
+.headerCell {
+    position: relative;
+
+    &.sortable {
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgba($color-primary, 0.05);
+        }
+    }
+}
+
+.headerContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sortIcon {
+    margin-left: 8px;
+    font-size: 10px;
+    color: $color-primary;
+}
+
+.body {
+    tr {
+        border-bottom: 1px solid $color-border;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+}
+
+.row {
+    &.clickable {
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgba($color-primary, 0.05);
+        }
+    }
+}
+
+.cell {
+    padding: 12px 16px;
+    vertical-align: middle;
+    color: $color-text;
+}
+
+.emptyMessage {
+    padding: 32px 16px;
+    text-align: center;
+    color: $color-text-secondary;
+}

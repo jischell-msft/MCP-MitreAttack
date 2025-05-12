@@ -1,0 +1,113 @@
+@import '../../../styles/variables';
+
+.container {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 400px;
+    z-index: $z-index-snackbar;
+}
+
+.notification {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    border-radius: $border-radius-md;
+    box-shadow: $shadow-md;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.info {
+    background-color: $color-info;
+}
+
+.success {
+    background-color: $color-success;
+}
+
+.warning {
+    background-color: $color-warning;
+    color: $color-text;
+}
+
+.error {
+    background-color: $color-error;
+}
+
+.icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+
+    svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+    }
+}
+
+.message {
+    flex: 1;
+    padding-right: 16px;
+    font-size: $font-size-md;
+    line-height: 1.5;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    color: currentColor;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+    padding: 4px;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.progressBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.5);
+    animation-name: progress;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    width: 100%;
+}
+
+@keyframes progress {
+    from {
+        width: 100%;
+    }
+
+    to {
+        width: 0%;
+    }
+}

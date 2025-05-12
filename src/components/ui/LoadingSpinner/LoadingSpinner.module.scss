@@ -1,0 +1,79 @@
+@import '../../../styles/variables';
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner {
+    display: inline-block;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Size variants
+.size-small {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+}
+
+.size-medium {
+    width: 24px;
+    height: 24px;
+    border-width: 2px;
+}
+
+.size-large {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+}
+
+// Color variants
+.color-primary {
+    border-top-color: $color-primary;
+    border-right-color: rgba($color-primary, 0.3);
+    border-bottom-color: rgba($color-primary, 0.3);
+    border-left-color: rgba($color-primary, 0.3);
+}
+
+.color-secondary {
+    border-top-color: $color-secondary;
+    border-right-color: rgba($color-secondary, 0.3);
+    border-bottom-color: rgba($color-secondary, 0.3);
+    border-left-color: rgba($color-secondary, 0.3);
+}
+
+.color-white {
+    border-top-color: #fff;
+    border-right-color: rgba(255, 255, 255, 0.3);
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+    border-left-color: rgba(255, 255, 255, 0.3);
+}
+
+.visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.label {
+    margin: 8px 0 0;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+}
