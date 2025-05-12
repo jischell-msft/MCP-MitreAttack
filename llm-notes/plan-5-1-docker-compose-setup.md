@@ -20,11 +20,10 @@ We're building a Multi-agent Coordination Platform (MCP) server that evaluates d
 - Add health check endpoint
 
 ### 5.1.2. Create production Dockerfile for frontend
-- Create Dockerfile for React frontend
-- Implement multi-stage build for optimization
-- Configure Nginx for serving static files
-- Set up caching headers
-- Create lightweight production image
+- Create Dockerfile for React frontend (static build)
+- Frontend assets served by a simple static server, proxied by Caddy
+- Caching handled by the static server (`serve`) or configurable in Caddy
+- Create lightweight production image for static assets
 
 ### 5.1.3. Set up multi-stage builds for optimization
 - Implement build stage for dependencies
@@ -150,7 +149,7 @@ CMD ["node", "dist/index.js"]
 
 ## Frontend Dockerfile
 
-Create a Dockerfile for the frontend:
+Create a Dockerfile for the frontend. This Dockerfile will build the static assets and use the `serve` package to serve them. Caddy will then reverse proxy to this service.
 
 ```dockerfile
 # Frontend Dockerfile
@@ -173,104 +172,30 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build the application
+# VITE_API_BASE_URL is set to /api so frontend requests go to Caddy's /api endpoint
 ENV VITE_API_BASE_URL=/api
 RUN npm run build
 
-# Stage 3: Runtime with Nginx
-FROM nginx:alpine AS runtime
-WORKDIR /usr/share/nginx/html
+# Stage 3: Runtime with simple static server
+FROM node:18-alpine AS runtime
+WORKDIR /app
 
-# Copy nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Remove default nginx static assets
-RUN rm -rf ./*
+# Install 'serve' to serve static files
+RUN npm install -g serve
 
 # Copy static assets from builder stage
-COPY --from=builder /app/dist .
+COPY --from=builder /app/dist ./dist
 
-# Permissions and security
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chmod -R 755 /usr/share/nginx/html && \
-    chown -R nginx:nginx /var/cache/nginx && \
-    chown -R nginx:nginx /var/log/nginx && \
-    chown -R nginx:nginx /etc/nginx/conf.d && \
-    touch /var/run/nginx.pid && \
-    chown -R nginx:nginx /var/run/nginx.pid
-
-# Switch to non-root user
-USER nginx
-
-# Expose port
+# Expose port 80 for the static server (for Caddy to connect to)
 EXPOSE 80
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:80/index.html || exit 1
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-## Nginx Configuration
-
-Create the Nginx configuration for the frontend:
-
-```nginx
-# nginx.conf
-server {
-    listen 80;
-    server_name localhost;
-    root /usr/share/nginx/html;
-    index index.html;
-
-    # Gzip compression
-    gzip on;
-    gzip_comp_level 5;
-    gzip_min_length 256;
-    gzip_proxied any;
-    gzip_vary on;
-    gzip_types
-        application/javascript
-        application/json
-        application/xml
-        text/css
-        text/plain
-        text/xml;
-
-    # Cache static assets
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
-        expires 30d;
-        add_header Cache-Control "public, max-age=2592000";
-        access_log off;
-    }
-
-    # API proxy
-    location /api/ {
-        proxy_pass http://backend:3001/api/;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # Handle routing in SPA
-    location / {
-        try_files $uri $uri/ /index.html;
-        add_header Cache-Control "no-cache, no-store, must-revalidate";
-    }
-
-    # Security headers
-    add_header X-Content-Type-Options "nosniff";
-    add_header X-Frame-Options "DENY";
-    add_header X-XSS-Protection "1; mode=block";
-    add_header Referrer-Policy "strict-origin-when-cross-origin";
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'";
-}
+# Start the static server
+# 'serve -s dist' serves the 'dist' folder, '-l 80' listens on port 80
+CMD ["serve", "-s", "dist", "-l", "80"]
 ```
 
 ## Docker Compose File
@@ -319,8 +244,9 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
-    ports:
-      - "127.0.0.1:8080:80"
+    # No direct host port mapping needed for frontend; Caddy handles external access
+    # ports:
+    #  - "127.0.0.1:8080:80" 
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/index.html"]
       interval: 30s
@@ -364,7 +290,7 @@ networks:
 
 Create the Caddyfile for reverse proxy:
 
-```
+```caddy
 # Caddyfile
 {
     # Global options
@@ -376,9 +302,19 @@ Create the Caddyfile for reverse proxy:
 
 # Domain configuration
 {$DOMAIN:localhost} {
-    # Reverse proxy for frontend
+    # API proxy to backend
+    handle_path /api/* {
+        reverse_proxy backend:3001 {
+            header_up Host {host}
+            header_up X-Real-IP {remote}
+            header_up X-Forwarded-For {remote}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Reverse proxy for frontend (serves static assets and handles SPA routing)
     handle {
-        reverse_proxy frontend:80 {
+        reverse_proxy frontend:80 { # frontend service serves on port 80 internally
             header_up Host {host}
             header_up X-Real-IP {remote}
             header_up X-Forwarded-For {remote}
@@ -395,7 +331,7 @@ Create the Caddyfile for reverse proxy:
         X-Frame-Options "DENY"
         X-XSS-Protection "1; mode=block"
         Referrer-Policy "strict-origin-when-cross-origin"
-        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' {$DOMAIN:localhost}/api;"
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     }
 
@@ -440,15 +376,16 @@ Create a deployment guide:
 ## Setup
 1. Clone the repository
 2. Copy `.env.example` to `.env`
-3. Edit `.env` to add your Azure OpenAI API credentials
+3. Edit `.env` to add your Azure OpenAI API credentials and optionally set your DOMAIN.
 4. Build and start the containers:
    ```
    docker-compose up -d
    ```
 
 ## Accessing the Application
-- Web interface: http://localhost/ (or https://your-domain.com if configured)
-- API: http://localhost/api/
+The application will be accessible via Caddy.
+- Web interface: `http://localhost` (or `http://your-domain.com` or `https://your-domain.com` if Caddy is configured for HTTPS with a public domain)
+- API: `http://localhost/api/` (or `http://your-domain.com/api/` or `https://your-domain.com/api/`)
 
 ## Data Persistence
 All data is stored in Docker volumes:
